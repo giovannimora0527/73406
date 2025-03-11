@@ -28,7 +28,7 @@ public class AutorServiceImpl implements AutorService {
     public List<Autor> obtenerListadoAutoresPorNacionalidad(String nacionalidad)
             throws BadRequestException {
         this.autorRepository.findByNacionalidad(nacionalidad).forEach(elem -> {
-           // System.out.println("Nombre Autor => " + elem.getNombre());getNombre 
+        
         });
         List<Autor> listaAutores = this.autorRepository.findByNacionalidad(nacionalidad);
         if (listaAutores.isEmpty()) {
