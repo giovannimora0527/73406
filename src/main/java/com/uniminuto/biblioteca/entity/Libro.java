@@ -34,7 +34,7 @@ public class Libro implements Serializable {
 
     /** Autor del libro (clave foránea que referencia a la entidad Autor). */
     @ManyToOne
-    @JoinColumn(name = "id_autor", nullable = false)
+    @JoinColumn(name = "autor_id", nullable = false)
     private Autor autor;
 
     /** Año de publicación del libro. */
