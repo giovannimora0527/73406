@@ -2,6 +2,7 @@ package com.uniminuto.biblioteca.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,7 +37,9 @@ public class Autor implements Serializable {
      */
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
-    
+    public String getNombre() {
+    return nombre;
+}
     /**
      * Nacionalidad del autor.
      */
@@ -48,4 +51,8 @@ public class Autor implements Serializable {
      */
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
+
+    public List<Libro> getLibros() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

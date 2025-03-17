@@ -31,6 +31,20 @@ public class LibroServiceImpl implements LibroService {
             throw new BadRequestException("No se encuentra el libro con el id = " 
                     + libroId);
         }
-      return optLibro.get();
+        return optLibro.get();
+    }
+
+    // Método para buscar por nombre (case-sensitive)
+    @Override
+    public Libro obtenerLibroPorNombre(String nombre) throws BadRequestException {
+    Optional<Libro> optLibro = this.libroRepository.findByNombre(nombre);
+    if (!optLibro.isPresent()) {
+        throw new BadRequestException("No se encuentra el libro con el nombre = " + nombre);
+    }
+    return optLibro.get();
+    }
+    @Override
+    public List<Libro> listarLibrosPorFecha(String fechaInicio, String fechaFin) {
+        return libroRepository.findByFechaPublicacionBetween(fechaInicio, fechaFin);
     }
 }

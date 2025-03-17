@@ -29,4 +29,13 @@ public class LibroApiController implements LibroApi {
     public ResponseEntity<Libro> obtenerLibroPorId(Integer libroId) throws BadRequestException {
       return ResponseEntity.ok(this.libroService.obtenerLibroId(libroId));
     }
+    @Override
+    public ResponseEntity <Libro> obtenerLibroPorNombre(String nombre) throws BadRequestException {
+    return ResponseEntity.ok(this.libroService.obtenerLibroPorNombre(nombre));
+    }
+    @Override
+    public ResponseEntity<List<Libro>> listarLibrosPorFecha(String fechaInicio, String fechaFin) {
+        List<Libro> libros = libroService.listarLibrosPorFecha(fechaInicio, fechaFin);
+        return ResponseEntity.ok(libros);
+    }
 }
