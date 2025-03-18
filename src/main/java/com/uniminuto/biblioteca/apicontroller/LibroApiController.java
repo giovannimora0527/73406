@@ -27,7 +27,7 @@ public class LibroApiController implements LibroApi {
      * @return La lista de libros.
      */
     @Override
-    public ResponseEntity<List<Libro>> listarLibros() {
+    public ResponseEntity<List<Libro>> listarLibros(){
         return ResponseEntity.ok(libroService.listarLibros());
     }
 

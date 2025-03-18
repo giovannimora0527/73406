@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.coyote.BadRequestException;
 
 /**
@@ -41,6 +43,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Optional<Usuario> obtenerUsuarioPorCorreo(String correo) throws BadRequestException {
         if (correo == null || correo.isEmpty()) {
             throw new BadRequestException("El correo no puede estar vacío.");
+        }
+        
+        // Expresión regular para validar el formato de un correo electrónico
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(correo);
+
+        if (!matcher.matches()) {
+            throw new BadRequestException("El formato del correo es inválido: " + correo);
         }
         
         Optional<Usuario> usuario = usuarioRepository.findByCorreo(correo);
