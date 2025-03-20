@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,14 +13,19 @@ import org.springframework.stereotype.Repository;
  * @author lmora
  */
 @Repository
-public interface LibroRepository extends
-        JpaRepository<Libro, Integer> {
-    @Query("SELECT l FROM Libro l WHERE BINARY l.nombre = ?1")
-    Optional<Libro> findByNombreExacto(String nombre);
+public interface LibroRepository extends JpaRepository<Libro, Integer> {
+
+    // Buscar libro por título exacto (sensitivo a mayúsculas y minúsculas)
+    @Query("SELECT l FROM Libro l WHERE l.titulo = ?1")
+    Optional<Libro> findByTituloExacto(String titulo);
+
+    // : Método debe buscar por título
+    Optional<Libro> findByTitulo(String titulo);
 
 
-    public Optional<Libro> findByNombre(String nombre);
+    List<Libro> findByAnioPublicacionBetween(Integer anioInicio, Integer anioFin);
 
-    public List<Libro> findByFechaPublicacionBetween(String fechaInicio, String fechaFin);
-    
+    // Buscar libros por ID del autor
+    @Query("SELECT l FROM Libro l WHERE l.autor.id = :autorId")
+    List<Libro> findLibrosByAutorId(@Param("autorId") Integer autorId);
 }

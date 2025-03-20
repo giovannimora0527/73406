@@ -35,11 +35,11 @@ public class UsuarioServiceImpl implements UsuarioService {
       return optUsuario.get();
     }
     @Override
-    public Usuario obtenerUsuarioEmail(String email) throws BadRequestException {
-        Optional<Usuario> optUsuario = this.usuarioRepository.findByEmail(email);
+    public Usuario obtenerUsuarioEmail(String correo) throws BadRequestException {
+        Optional<Usuario> optUsuario = this.usuarioRepository.findByCorreo(correo);
 
         if (!optUsuario.isPresent()) {
-            throw new BadRequestException("No se encuentra el Usuario con el email = " + email);
+            throw new BadRequestException("No se encuentra el Usuario con el email = " + correo);
         }
 
         return optUsuario.get();

@@ -5,9 +5,9 @@ import com.uniminuto.biblioteca.repository.LibroRepository;
 import com.uniminuto.biblioteca.services.LibroService;
 import java.util.List;
 import java.util.Optional;
-import org.apache.coyote.BadRequestException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -15,36 +15,43 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class LibroServiceImpl implements LibroService {
-    
-    @Autowired
-    private LibroRepository libroRepository;
+
+    private final LibroRepository libroRepository;
+
+    public LibroServiceImpl(LibroRepository libroRepository) {
+        this.libroRepository = libroRepository;
+    }
 
     @Override
-    public List<Libro> listarLibros() throws BadRequestException {
-       return this.libroRepository.findAll();
+    public List<Libro> listarLibros() {
+        return libroRepository.findAll();
     }
 
     @Override
-    public Libro obtenerLibroId(Integer libroId) throws BadRequestException {        
-        Optional<Libro> optLibro = this.libroRepository.findById(libroId);
-        if (!optLibro.isPresent()) {
-            throw new BadRequestException("No se encuentra el libro con el id = " 
-                    + libroId);
-        }
-        return optLibro.get();
+    public Libro obtenerLibroId(Integer libroId) {
+        return libroRepository.findById(libroId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encuentra el libro con id = " + libroId));
     }
 
-    // Método para buscar por nombre (case-sensitive)
     @Override
-    public Libro obtenerLibroPorNombre(String nombre) throws BadRequestException {
-    Optional<Libro> optLibro = this.libroRepository.findByNombre(nombre);
-    if (!optLibro.isPresent()) {
-        throw new BadRequestException("No se encuentra el libro con el nombre = " + nombre);
+    public Libro obtenerLibroPorNombre(String titulo) {
+        return libroRepository.findByTitulo(titulo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encuentra el libro con el nombre = " + titulo));
     }
-    return optLibro.get();
-    }
+
     @Override
     public List<Libro> listarLibrosPorFecha(String fechaInicio, String fechaFin) {
-        return libroRepository.findByFechaPublicacionBetween(fechaInicio, fechaFin);
+        try {
+            Integer anioInicio = Integer.valueOf(fechaInicio);
+            Integer anioFin = Integer.valueOf(fechaFin);
+            return libroRepository.findByAnioPublicacionBetween(anioInicio, anioFin);
+        } catch (NumberFormatException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Los valores de fecha deben ser números enteros válidos.");
+        }
+    }
+
+    @Override
+    public List<Libro> obtenerLibrosPorAutorId(Integer autorId) {
+        return libroRepository.findLibrosByAutorId(autorId);
     }
 }

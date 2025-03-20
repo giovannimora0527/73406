@@ -14,8 +14,10 @@ public interface LibroService {
 
     Libro obtenerLibroId(Integer libroId) throws BadRequestException;
 
-    Libro obtenerLibroPorNombre(String nombre) throws BadRequestException; 
+    Libro obtenerLibroPorNombre(String titulo) throws BadRequestException; 
 
     public List<Libro> listarLibrosPorFecha(String fechaInicio, String fechaFin);
+    
+    List<Libro> obtenerLibrosPorAutorId(Integer autorId);
     
 }

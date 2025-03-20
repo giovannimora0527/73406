@@ -4,7 +4,6 @@ import com.uniminuto.biblioteca.entity.Autor;
 import com.uniminuto.biblioteca.entity.Libro;
 import com.uniminuto.biblioteca.repository.AutorRepository;
 import com.uniminuto.biblioteca.services.AutorService;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.apache.coyote.BadRequestException;
@@ -48,12 +47,5 @@ public class AutorServiceImpl implements AutorService {
         }
         return optAutor.get();
     }
-    @Override
-    public List<Libro> obtenerLibrosPorAutor(Integer autorId) throws BadRequestException {
-        Optional<Autor> autor = autorRepository.findById(autorId);
-        if (!autor.isPresent()) {
-            throw new BadRequestException("No se encuentra el autor con ID: " + autorId);
-        }
-        return autor.get().getLibros();
-    }
+
 }

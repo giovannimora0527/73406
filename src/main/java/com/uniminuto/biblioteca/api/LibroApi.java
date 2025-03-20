@@ -46,12 +46,12 @@ public interface LibroApi {
             throws BadRequestException;
     /**
      * Método para obtener un libro por su nombre.
-     * @param nombre Nombre del libro.
+     * @param titulo
      * @return Libro encontrado.
      * @throws BadRequestException excepción.
      */
     @GetMapping("/obtener-libro-nombre")
-    ResponseEntity<Libro> obtenerLibroPorNombre(@RequestParam String nombre) throws BadRequestException;
+    ResponseEntity<Libro> obtenerLibroPorNombre(@RequestParam String titulo) throws BadRequestException;
     /**
     * Método para obtener libros dentro de un rango de fechas de publicación.
     * @param fechaInicio Fecha inicial.
@@ -63,5 +63,13 @@ public interface LibroApi {
        @RequestParam String fechaInicio, 
        @RequestParam String fechaFin
    );
-   
+   /**
+    * Método para obtener los libros de un autor específico.
+    * @param autorId ID del autor.
+    * @return Lista de libros escritos por el autor.
+    * @throws BadRequestException excepción.
+    */
+   @GetMapping("/listar-por-autor")
+   ResponseEntity<List<Libro>> obtenerLibrosPorAutor(@RequestParam Integer autorId) 
+       throws BadRequestException;
 }

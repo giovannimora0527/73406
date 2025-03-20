@@ -13,5 +13,5 @@ public interface UsuarioService {
     
     Usuario obtenerUsuarioId(Integer usuarioId) throws BadRequestException;
     
-    Usuario obtenerUsuarioEmail(String email) throws BadRequestException; 
+    Usuario obtenerUsuarioEmail(String correo) throws BadRequestException; 
 }

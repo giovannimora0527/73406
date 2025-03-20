@@ -46,7 +46,7 @@ public interface UsuarioApi {
     /**
  * Método para obtener un usuario por su email.
  * 
-     * @param Email
+ * @param correo
  * @return Usuario encontrado.
  * @throws BadRequestException Excepción si no se encuentra el usuario.
  */
@@ -54,7 +54,7 @@ public interface UsuarioApi {
     produces = {"application/json"},
     consumes = {"application/json"},
     method = RequestMethod.GET)
-    ResponseEntity<Usuario> obtenerUsuarioEmail (@RequestParam String Email)
+    ResponseEntity<Usuario> obtenerUsuarioEmail (@RequestParam String correo)
             throws BadRequestException;
 
 }

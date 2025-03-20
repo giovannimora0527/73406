@@ -31,7 +31,7 @@ public class UsuarioApiController implements UsuarioApi {
     }
     
     @Override
-    public ResponseEntity<Usuario> obtenerUsuarioEmail(String Email) throws BadRequestException {
-      return ResponseEntity.ok(this.usuarioService.obtenerUsuarioEmail(Email));
+    public ResponseEntity<Usuario> obtenerUsuarioEmail(String correo) throws BadRequestException {
+      return ResponseEntity.ok(this.usuarioService.obtenerUsuarioEmail(correo));
     }
 }
