@@ -22,12 +22,6 @@ public interface UsuarioService {
      */
     List<Usuario> listarUsuarios();
 
-    /**
-     * Obtiene un usuario por su ID.
-     * @param id ID del usuario.
-     * @return Usuario encontrado, envuelto en un Optional.
-     */
-    Optional<Usuario> obtenerUsuarioPorId(Long id);
 
     /**
      * Obtiene un usuario por su correo electrónico.
@@ -39,17 +33,5 @@ public interface UsuarioService {
      */
     Optional<Usuario> obtenerUsuarioPorCorreo(String correo);
 
-    /**
-     * Guarda un nuevo usuario en la base de datos.
-     * @param usuario Usuario a guardar.
-     * @return Usuario guardado.
-     */
-    Usuario guardarUsuario(Usuario usuario);
-
-    /**
-     * Elimina un usuario por su ID.
-     * @param id ID del usuario a eliminar.
-     */
-    void eliminarUsuario(Long id);
 }
 

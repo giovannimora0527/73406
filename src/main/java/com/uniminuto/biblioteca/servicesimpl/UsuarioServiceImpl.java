@@ -44,42 +44,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    
-    /**
-     * Guarda un nuevo usuario en la base de datos.
-     *
-     * @param usuario Objeto Usuario a guardar.
-     * @return Usuario guardado.
-     */
-    @Override
-    public Usuario guardarUsuario(Usuario usuario) {
-        return usuarioRepository.save(usuario);
-    }
-
-    
-    /**
-     * Elimina un usuario de la base de datos por su ID.
-     *
-     * @param id Identificador del usuario a eliminar.
-     */
-    @Override
-    public void eliminarUsuario(Long id) {
-        usuarioRepository.deleteById(id);
-    }
-
-    
-    /**
-     * Obtiene un usuario por su ID.
-     *
-     * @param id Identificador del usuario a buscar.
-     * @return Usuario encontrado, envuelto en un Optional.
-     */
-    @Override
-    public Optional<Usuario> obtenerUsuarioPorId(Long id) {
-        return usuarioRepository.findById(id);
-    }
-
-    
+   
     
     /**
      * Obtiene un usuario por su correo electrónico con validación de formato.

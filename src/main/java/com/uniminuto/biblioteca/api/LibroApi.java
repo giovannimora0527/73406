@@ -43,4 +43,51 @@ public interface LibroApi {
             method = RequestMethod.GET)
     ResponseEntity<Libro> obtenerLibroPorId(@RequestParam Integer libroId)
             throws BadRequestException;
+    
+        /**
+     * Metodo para listar los libros por autor.
+     *
+     * @param idAutor Id del autor.
+     * @return Lista de libros asociados al autor.
+     * @throws BadRequestException excepcion.
+     */
+    @RequestMapping(value = "/listar-por-autor",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<Libro>> listarLibrosPorAutor(@RequestParam Long idAutor)
+            throws BadRequestException;
+    
+    
+    /**
+     * Metodo para listar los libros por titulo.
+     *
+     * @param titulo del titulo.
+     * @return Lista de libros con el mismo titulo.
+     * @throws BadRequestException excepcion.
+    */
+    @RequestMapping(value = "/libro-por-titulo",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<Libro> obtenerLibroPorTitulo(@RequestParam String titulo)
+            throws BadRequestException;
+    
+    /**
+     * Metodo para listar los libros por Fechas.
+     *
+     * @param anioInicio
+     * @param anioFin
+     * @return Lista de libros con el mismo titulo.
+     * @throws BadRequestException excepcion.
+    */
+    @RequestMapping(value = "/listar-por-Anio",
+        produces = {"application/json"},
+        consumes = {"application/json"},
+        method = RequestMethod.GET)
+    ResponseEntity<List<Libro>> listarLibrosPoranioPublicacion(
+            @RequestParam int anioInicio,
+            @RequestParam int anioFin
+    ) throws BadRequestException;
 }
+

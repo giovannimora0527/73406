@@ -1,97 +1,75 @@
 package com.uniminuto.biblioteca.apicontroller;
 
 
+import com.uniminuto.biblioteca.api.LibroApi;
 import com.uniminuto.biblioteca.entity.Libro;
 import com.uniminuto.biblioteca.services.LibroService;
+import java.util.List;
+import org.apache.coyote.BadRequestException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
-import java.util.List;
-import javax.persistence.EntityNotFoundException;
+
+
 
 /**
  *
  * @author lmora
  */
 @RestController
-@RequestMapping("/libro") // Define la ruta base del controlador
-public class LibroApiController {
-
+public class LibroApiController implements LibroApi {
+    
     @Autowired
     private LibroService libroService;
-
-    /** 
-     * Endpoint para listar todos los libros.
-     * @return Lista de libros.
-     */
-    @GetMapping
-    public ResponseEntity<List<Libro>> listarLibros() {
-        return ResponseEntity.ok(libroService.listarLibros());
+    
+    @Override
+    public ResponseEntity<List<Libro>> listarLibros()
+            throws BadRequestException {
+        return ResponseEntity.ok(this.libroService.listarLibros());
     }
 
-    /** 
-     * Endpoint para obtener un libro por su ID.
-     * @param libroId ID del libro.
-     * @return Libro encontrado.
-     */
-    @GetMapping("/{libroId}")
-    public ResponseEntity<Libro> obtenerLibroPorId(@PathVariable Integer libroId) {
-        try {
-            return ResponseEntity.ok(libroService.obtenerLibroId(libroId));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Libro no encontrado con ID: " + libroId);
-        }
+    @Override
+    public ResponseEntity<Libro> obtenerLibroPorId(Integer libroId) throws BadRequestException {
+      return ResponseEntity.ok(this.libroService.obtenerLibroId(libroId));
     }
 
-    /** 
-     * Endpoint para listar libros de un autor por su ID.
-     * @param autorId ID del autor.
-     * @return Lista de libros del autor.
-     */
-    @GetMapping("/autor/{autorId}")
-    public ResponseEntity<List<Libro>> listarLibrosPorAutor(@PathVariable Integer autorId) {
-    try {
-        List<Libro> libros = libroService.listarLibrosPorAutor(autorId);
-        return ResponseEntity.ok(libros);// Si la lista está vacía, se retorna vacía sin error
-    } catch (EntityNotFoundException  e) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró el autor con ID: " + autorId);
-        }
-    }
+    
     /**
-     * Endpoint para obtener un libro por su título exacto (case-sensitive).
-     * @param titulo Título exacto del libro.
-     * @return Libro encontrado.
+    * Controlador que gestiona las operaciones relacionadas con los libros.
+    * 
+     * Lista los libros asociados a un autor.
+     *
+     * @param idAutor Id del autor.
+     * @return Lista de libros asociados al autor.
+     * @throws BadRequestException Si el autor no existe.
      */
-    @GetMapping("/titulo/{titulo}")
-    public ResponseEntity<Libro> obtenerLibroPorTitulo(@PathVariable String titulo) {
-        try {
-            // Busca el libro por título
-            Libro libro = libroService.obtenerLibroPorTitulo(titulo);
-            return ResponseEntity.ok(libro);
-        } catch (EntityNotFoundException e) {
-            // Devuelve un error 404 si el libro no existe
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    @Override
+    public ResponseEntity<List<Libro>> listarLibrosPorAutor(@RequestParam Long idAutor) throws BadRequestException {
+        return ResponseEntity.ok(this.libroService.listarLibrosPorAutor(idAutor));
     }
     
     /**
-     * Endpoint para listar libros por un rango de fechas de publicación.
-     * 
-      @param anioInicio Año de inicio del rango.
-     * @param anioFin Año de finalización del rango.
-     * @return Lista de libros cuyo año de publicación está dentro del rango.
-     */
-    @GetMapping("/anio")
-    public ResponseEntity<List<Libro>> listarLibrosPorAnioPublicacion(
-            @RequestParam Integer anioInicio,
-            @RequestParam Integer anioFin) {
-        try {
-            List<Libro> libros = libroService.listarLibrosPorAnioPublicacion(anioInicio, anioFin);
-            return ResponseEntity.ok(libros);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+    * Obtiene un libro a partir de su título.
+    *
+    * @param titulo el título del libro a buscar.
+    * @return ResponseEntity con el libro encontrado.
+    * @throws BadRequestException si el libro no existe.
+    */
+    @Override
+    public ResponseEntity<Libro> obtenerLibroPorTitulo(@RequestParam String titulo) throws BadRequestException {
+        return ResponseEntity.ok(this.libroService.obtenerLibroPorTitulo(titulo));
+    }
+    /**
+    * Lista los libros publicados dentro de un rango de años.
+    *
+    * @param anioInicio el año de inicio del rango.
+    * @param anioFin el año de fin del rango.
+    * @return ResponseEntity con la lista de libros publicados dentro del rango especificado.
+    * @throws BadRequestException si la fecha de inicio es mayor que la final
+    *         o si no se encuentran libros en el rango.
+    */
+    @Override
+    public ResponseEntity<List<Libro>> listarLibrosPoranioPublicacion(int anioInicio, int anioFin) throws BadRequestException {
+        return ResponseEntity.ok(libroService.listarLibrosPoranioPublicacion(anioInicio, anioFin));
     }
 }

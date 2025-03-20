@@ -5,95 +5,153 @@
 package com.uniminuto.biblioteca.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+
 
 /**
- *
+ * Entidad que representa a un usuario en la base de datos.
+ * 
+ * La clase {@code Usuario} almacena información sobre los usuarios 
+ * registrados en el sistema, incluyendo su nombre, correo, teléfono 
+ * y fecha de registro.
+ * 
+ * Se utiliza JPA para la persistencia en la base de datos.
+ * 
  * @author holma
- */@Entity
-   @Table(name = "usuarios")
- 
+ */
+@Entity
+@Table(name = "usuarios")
 public class Usuario implements Serializable {
-     /** Identificador único del usuario */
+     /**
+     * Identificador único del usuario.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
-    private Long id;
-    
-    /** Nombre completo del usuario */
-    @Column(name = "nombre", nullable = false)
+    private Long idUsuario;
+    /**
+     * Nombre del usuario.
+     */
+
+    @Column(name = "nombre")
     private String nombre;
-    
-    /** Correo electrónico del usuario (debe ser único) */
-    @Column(name = "correo", unique = true, nullable = false)
+    /**
+     * Correo electrónico del usuario.
+     */
+
+    @Column(name = "correo")
     private String correo;
-    
-    /** Numero de telefono del usuario */
-    @Column(name = "telefono", nullable = false)
+    /**
+     * Número de teléfono del usuario.
+     */
+
+    @Column(name = "telefono")
     private String telefono;
-    
-    /** Fecha de registro */
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "fecha_registro", nullable = false, updatable = false)
-    private Date fechaRegistro;
+    /**
+     * Fecha y hora de registro del usuario en el sistema.
+     */
 
-    public Usuario() {
-        this.fechaRegistro = new Date(); // Establece la fecha actual por defecto
-    }
-
-    public Usuario(String nombre, String correo, String telefono) {
-        this.nombre = nombre;
-        this.correo = correo;
-        this.telefono = telefono;
-        this.fechaRegistro = new Date();
-    }
+    @Column(name = "fecha_registro")
+    private LocalDateTime fechaRegistro;
 
     // Getters y Setters
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
+    /**
+     * Obtiene el ID del usuario.
+     * @return 
+     * */
+    public Long getIdUsuario() {
+        return idUsuario;
     }
+    /**
+     * Establece el ID del usuario.
+     * 
+     * @param idUsuario Nuevo ID del usuario.
+     */
+
+    public void setIdUsuario(Long idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+    /**
+     * Obtiene el nombre del usuario.
+     * 
+     * @return Nombre del usuario.
+     */
 
     public String getNombre() {
         return nombre;
     }
+    /**
+     * Establece el nombre del usuario.
+     * 
+     * @param nombre Nuevo nombre del usuario.
+     */
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+    /**
+     * Obtiene el correo electrónico del usuario.
+     * 
+     * @return Correo del usuario.
+     */
 
     public String getCorreo() {
         return correo;
     }
+    
+    /**
+     * Establece el correo electrónico del usuario.
+     * 
+     * @param correo Nuevo correo del usuario.
+     */
 
     public void setCorreo(String correo) {
         this.correo = correo;
     }
+    
+    /**
+     * Obtiene el número de teléfono del usuario.
+     * 
+     * @return Teléfono del usuario.
+     */
 
     public String getTelefono() {
         return telefono;
     }
+    /**
+     * Establece el número de teléfono del usuario.
+     * 
+     * @param telefono Nuevo teléfono del usuario.
+     */
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
+    
+    /**
+     * Obtiene la fecha y hora de registro del usuario.
+     * 
+     * @return Fecha de registro del usuario.
+     */
 
-    public Date getFechaRegistro() {
+    public LocalDateTime getFechaRegistro() {
         return fechaRegistro;
     }
+    
+    /**
+     * Establece la fecha y hora de registro del usuario.
+     * 
+     * @param fechaRegistro Nueva fecha de registro.
+     */
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 }

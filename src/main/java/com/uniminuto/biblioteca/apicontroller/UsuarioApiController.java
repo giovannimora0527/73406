@@ -4,71 +4,72 @@
  */
 package com.uniminuto.biblioteca.apicontroller;
 
+import com.uniminuto.biblioteca.api.UsuarioApi;
 import com.uniminuto.biblioteca.entity.Usuario;
 import com.uniminuto.biblioteca.services.UsuarioService;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 
 /**
  *
  * @author holma
  */
-/**
- * Controlador REST para la gestión de usuarios en la biblioteca.
- * Proporciona endpoints para listar, buscar, guardar y eliminar usuarios.
- */
-@RestController
-@RequestMapping("/usuario")
-@CrossOrigin(origins = "*")
-public class UsuarioApiController {
 
+@RestController
+public class UsuarioApiController implements UsuarioApi {
+
+    /**
+     * UsuarioService.
+     */
     @Autowired
     private UsuarioService usuarioService;
     
-    
-    @GetMapping("/listarUsuarios")
-    public ResponseEntity<List<Usuario>> listarUsuarios() {
-        List<Usuario> usuarios = usuarioService.listarUsuarios();
-        return ResponseEntity.ok(usuarios);
-    }
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
-     /**
-     * Endpoint para obtener un usuario por su correo electrónico.
-     * 
-     * Este método busca un usuario en la base de datos utilizando su correo electrónico.
-     * Antes de realizar la búsqueda, se valida el formato del correo. 
-     * Si el formato es inválido, se devuelve un error 400 (BAD REQUEST).
-     * Si no se encuentra el usuario, se devuelve un error 404 (NOT FOUND).
+    /**
+     * Lista todos los usuarios registrados en la biblioteca.
      *
-     * @param correo Correo electrónico del usuario a buscar.
-     * @return ResponseEntity con el usuario encontrado o un mensaje de error.
+     * @return Lista de usuarios en la base de datos.
+     * @throws ResponseStatusException Si ocurre un error en la consulta.
      */
-    @GetMapping("/buscar-por-correo")
-public ResponseEntity<?> buscarUsuarioPorCorreo(@RequestParam String correo) {
-    try {
-        Optional<Usuario> usuario = usuarioService.obtenerUsuarioPorCorreo(correo);
-        
-        // Si el usuario está presente, retornarlo con estado 200 OK
-        if (usuario.isPresent()) {
-            return ResponseEntity.ok(usuario.get());
-        } else {
-            // Si no se encuentra, retornar 404 con un mensaje claro
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .body(Collections.singletonMap("error", "Usuario no encontrado para el correo: " + correo));
-        }
-    } catch (IllegalArgumentException e) {
-        // Si el correo tiene formato inválido, retornar 400 BAD REQUEST
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                             .body(Collections.singletonMap("error", "Formato de correo inválido: " + correo));
+    @Override
+    public ResponseEntity<List<Usuario>> listarUsuarios() {
+        try {
+            List<Usuario> usuarios = usuarioService.listarUsuarios();
+            
+            if (usuarios.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No hay usuarios registrados.");
+            }
+            
+            return ResponseEntity.ok(usuarios);
+
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, 
+                "Error al obtener la lista de usuarios", e);
         }
     }
+    
+    /**
+    * Obtiene un usuario por su correo electrónico.
+    *
+    * @param correo Correo electrónico del usuario a buscar.
+    * @return ResponseEntity con el usuario encontrado o un error si no existe.
+    */
+   @GetMapping("/buscar-por-correo")
+    @Override
+   public ResponseEntity<Usuario> obtenerUsuarioPorCorreo(@RequestParam String correo) {
+       Usuario usuario = usuarioService.obtenerUsuarioPorCorreo(correo)
+               .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
+                       "Usuario con correo " + correo + " no encontrado."));
+
+       return ResponseEntity.ok(usuario);
+   }
 }
+ 

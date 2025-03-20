@@ -19,12 +19,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    
-    /**
-     * Busca un usuario por su correo electrónico.
-     * 
-     * @param correo Correo del usuario a buscar.
-     * @return Usuario encontrado, envuelto en un Optional.
-     */
+     // Método para encontrar un usuario por su correo (opcional)
     Optional<Usuario> findByCorreo(String correo);
 }

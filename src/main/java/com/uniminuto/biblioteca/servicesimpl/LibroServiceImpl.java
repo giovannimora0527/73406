@@ -1,10 +1,13 @@
 package com.uniminuto.biblioteca.servicesimpl;
 
+import com.uniminuto.biblioteca.entity.Autor;
 import com.uniminuto.biblioteca.entity.Libro;
+import com.uniminuto.biblioteca.repository.AutorRepository;
 import com.uniminuto.biblioteca.repository.LibroRepository;
 import com.uniminuto.biblioteca.services.LibroService;
 import java.util.List;
-import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,76 +15,90 @@ import org.springframework.stereotype.Service;
  *
  * @author lmora
  */
-
-/**
- * Implementación de la interfaz LibroService para gestionar los libros.
- * Proporciona métodos para listar, buscar y obtener libros.
- */
 @Service
 public class LibroServiceImpl implements LibroService {
     
     @Autowired
     private LibroRepository libroRepository;
+    
+    @Autowired
+    private AutorRepository autorRepository;
 
     @Override
-    public List<Libro> listarLibros() {
-        return libroRepository.findAll();
+    public List<Libro> listarLibros() throws BadRequestException {
+       return this.libroRepository.findAll();
     }
 
     @Override
-    public Libro obtenerLibroId(Integer libroId) {
-        return libroRepository.findById(libroId)
-                .orElseThrow(() -> new EntityNotFoundException("No se encuentra el libro con ID: " + libroId));
-    }
-    
     /**
-    * Lista todos los libros asociados a un autor específico.
-  
-    Este método verifica si el autor existe antes de buscar los libros. 
-    Si el autor no está registrado en la base de datos, lanza una excepción **/
-    
-    @Override
-    public List<Libro> listarLibrosPorAutor(Integer autorId) {
-        // Verificar si el autor existe
-        boolean existeAutor = libroRepository.existsByAutor_AutorId(autorId);
-        if (!existeAutor) {
-            throw new EntityNotFoundException("No se encontró el autor con ID: " + autorId);
-        }
-       
-            // Buscar libros por autor y retornar una lista vacía si no hay resultados
-         return libroRepository.findByAutor_AutorId(autorId);// Si no hay libros, retorna lista vacía
-           
-    }
-    
-    
-    /**
-    * Obtiene un libro por su título.
-    * 
-    * Este método busca un libro en el repositorio utilizando el título proporcionado.
-    * Si el libro no se encuentra en la base de datos, lanza una excepción indicando 
-    * que no se encontró un libro con el título exacto.
+    * Obtiene un libro por su ID.
+    *
+    * @param libroId el ID del libro a buscar.
+    * @return el libro encontrado.
+    * @throws BadRequestException si el libro no existe.
     */
-    
-    @Override
-     public Libro obtenerLibroPorTitulo(String titulo) {
-        return libroRepository.findByTitulo(titulo)
-                .orElseThrow(() -> new EntityNotFoundException("No se encontró un libro con el título exacto: " + titulo));
+    public Libro obtenerLibroId(Integer libroId) throws BadRequestException {        
+        Optional<Libro> optLibro = this.libroRepository.findById(libroId);
+        if (!optLibro.isPresent()) {
+            throw new BadRequestException("No se encuentra el libro con el ID = " + libroId);
+        }
+        return optLibro.get();
     }
 
-    
-    /**
-     * Obtiene una lista de libros publicados dentro de un rango de años especificado.
-     * 
-     * @param anioInicio Año de inicio del rango (incluido).
-     * @param anioFin Año de finalización del rango (incluido).
-     * @return Lista de libros cuyo año de publicación está dentro del rango.
-     * @throws IllegalArgumentException si algún año es nulo o si el año de inicio es mayor al año final.
-     */
     @Override
-    public List<Libro> listarLibrosPorAnioPublicacion(Integer anioInicio, Integer anioFin) {
-        if (anioInicio > anioFin) {
-            throw new IllegalArgumentException("El año de inicio no puede ser mayor al año final.");
-        }
-        return libroRepository.findByAnioPublicacionBetween(anioInicio, anioFin);
+    /**
+    * Lista los libros de un autor específico.
+    *
+    * @param idAutor el ID del autor cuyos libros se desean listar.
+    * @return una lista de libros del autor.
+    * @throws BadRequestException si el autor no existe o no tiene libros registrados.
+    */
+    public List<Libro> listarLibrosPorAutor(Long idAutor) throws BadRequestException {
+    // Obtener el autor y validar si existe
+    Autor autor = autorRepository.findById(idAutor)
+        .orElseThrow(() -> new BadRequestException("No se encuentra un autor con el ID = " + idAutor));
+
+    // Obtener los libros asociados al autor
+    return libroRepository.findByAutor(autor);
     }
+    
+
+    @Override
+    /**
+    * Obtiene un libro a partir de su título.
+    *
+    * @param titulo el título del libro a buscar.
+    * @return el libro encontrado.
+    * @throws BadRequestException si el libro no existe.
+    */
+    public Libro obtenerLibroPorTitulo(String titulo) throws BadRequestException {
+        return libroRepository.findByTitulo(titulo)
+                .orElseThrow(() -> new BadRequestException("No se encontró un libro con el nombre: " + titulo));
+    }
+    
+    
+    @Override
+    
+   /**
+    * Lista los libros publicados dentro de un rango de años.
+    *
+    * @param anioInicio el año de inicio del rango.
+    * @param anioFin el año de fin del rango.
+    * @return una lista de libros publicados dentro del rango especificado.
+    * @throws BadRequestException si la fecha de inicio es mayor que la final
+    *         o si no se encuentran libros en el rango.
+    */
+    public List<Libro> listarLibrosPoranioPublicacion(int anioInicio, int anioFin) throws BadRequestException {
+    if (anioInicio > anioFin) {
+        throw new BadRequestException("La fecha de inicio no puede ser mayor que la fecha final.");
+    }
+    
+    List<Libro> libros = libroRepository.findByAnioPublicacionBetween(anioInicio, anioFin);
+    
+    if (libros.isEmpty()) {
+        throw new BadRequestException("No se encontraron libros en el rango de fechas proporcionado.");
+    }
+    
+    return libros;
+}
 }
