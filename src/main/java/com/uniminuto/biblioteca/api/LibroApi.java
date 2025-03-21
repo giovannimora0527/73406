@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -18,29 +20,48 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface LibroApi {
 
     /**
-     * Metodo para listar los autores registrados en bd.
-     *
-     * @return Lista de autores.
-     * @throws BadRequestException excepcion.
+     * Listar todos los libros.
+     * @return Lista de libros.
+     * @throws BadRequestException Excepción en caso de error.
      */
-    @RequestMapping(value = "/listar",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.GET)
-    ResponseEntity<List<Libro>> listarLibros()
-            throws BadRequestException;
-    
-     /**
-     * Metodo para listar los autores registrados en bd.
-     *
-     * @param libroId Id del libro.
-     * @return Lista de autores.
-     * @throws BadRequestException excepcion.
+    @GetMapping
+    ResponseEntity<List<Libro>> listarLibros() throws BadRequestException;
+
+    /**
+     * Obtener un libro por ID.
+     * @param id ID del libro a buscar.
+     * @return Libro encontrado o excepción si no existe.
+     * @throws BadRequestException Excepción en caso de error.
      */
-    @RequestMapping(value = "/obtener-libro-id",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.GET)
-    ResponseEntity<Libro> obtenerLibroPorId(@RequestParam Integer libroId)
-            throws BadRequestException;
+    @GetMapping("/{id}")
+    ResponseEntity<Libro> obtenerLibroPorId(@PathVariable Integer id) throws BadRequestException;
+
+    /**
+     * Obtener libros por el ID de un autor.
+     * @param autorId ID del autor.
+     * @return Lista de libros del autor.
+     * @throws BadRequestException Excepción en caso de error.
+     */
+    @GetMapping("/autor/{autorId}")
+    ResponseEntity<List<Libro>> obtenerLibrosPorAutor(@PathVariable Integer autorId) throws BadRequestException;
+
+    /**
+     * Obtener un libro por título exacto.
+     * @param titulo Título del libro.
+     * @return Libro encontrado.
+     * @throws BadRequestException Excepción en caso de error.
+     */
+    @GetMapping("/buscar")
+    ResponseEntity<Libro> obtenerLibroPorNombre(@RequestParam String titulo) throws BadRequestException;
+
+    /**
+     * Obtener libros por rango de fechas.
+     * @param inicio Año de inicio.
+     * @param fin Año de fin.
+     * @return Lista de libros en el rango de fechas.
+     * @throws BadRequestException Excepción en caso de error.
+     */
+    @GetMapping("/buscar-por-fecha")
+    ResponseEntity<List<Libro>> listarLibrosPorFecha(@RequestParam Integer inicio, @RequestParam Integer fin) throws BadRequestException;
+
 }
