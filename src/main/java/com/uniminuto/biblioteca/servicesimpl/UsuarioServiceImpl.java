@@ -1,8 +1,11 @@
 package com.uniminuto.biblioteca.servicesimpl;
 
 import com.uniminuto.biblioteca.entity.Usuario;
+import com.uniminuto.biblioteca.model.UsuarioRq;
+import com.uniminuto.biblioteca.model.UsuarioRs;
 import com.uniminuto.biblioteca.repository.UsuarioRepository;
 import com.uniminuto.biblioteca.services.UsuarioService;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -60,15 +63,55 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     /**
-     * 
+     *
      * @param correo
-     * @return 
+     * @return
      */
     public boolean validarCorreo(String correo) {
         if (correo == null || correo.isBlank()) {
             return false;
         }
         return EMAIL_PATTERN.matcher(correo).matches();
+    }
+
+    @Override
+    public UsuarioRs guardarUsuarioNuevo(UsuarioRq usuario) throws BadRequestException {
+        Optional<Usuario> optUser = this.usuarioRepository
+                .findByNombre(usuario.getNombreCompleto());
+        if (optUser.isPresent()) {
+            throw new BadRequestException("El usuario ya existe con el nombre "
+                    + usuario.getNombreCompleto()
+                    + ", Verifique e intente de nuevo.");
+        }
+
+        optUser = this.usuarioRepository
+                .findByCorreo(usuario.getCorreo());
+
+        if (optUser.isPresent()) {
+            throw new BadRequestException("El usuario ya existe con el correo "
+                    + usuario.getCorreo()
+                    + ", Verifique e intente de nuevo.");
+        }     
+        this.usuarioRepository.save(this.convertirUsuarioRqToUsuario(usuario));
+        UsuarioRs rta = new UsuarioRs();
+        rta.setMessage("Se ha guardado el usuario con exito.");
+        return rta;
+    }
+    
+    
+    private Usuario convertirUsuarioRqToUsuario(UsuarioRq usuario) {
+        Usuario user = new Usuario();
+        user.setNombre(usuario.getNombreCompleto());
+        user.setActivo(true);
+        user.setFechaRegistro(LocalDateTime.now());
+        user.setCorreo(usuario.getCorreo());
+        user.setTelefono(usuario.getTelefono());
+        return user;
+    }
+
+    @Override
+    public UsuarioRs actualizarUsuario(UsuarioRq usuario) throws BadRequestException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

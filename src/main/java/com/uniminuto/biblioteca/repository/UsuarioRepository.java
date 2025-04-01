@@ -10,12 +10,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface UsuarioRepository extends
         JpaRepository<Usuario, Integer> {
-    
+
     /**
      * Busca un usuario dado un email.
+     *
      * @param correo email de entrada.
      * @return Usuario que cumpla con el criterio.
      */
     Optional<Usuario> findByCorreo(String correo);
-    
+
+    /**
+     * Encuentro un usuario por nombre.
+     * @param nombre dato a buscar.
+     * @return usuario que cumpla con la condicion.
+     */    
+    Optional<Usuario> findByNombre(String nombre);
+
 }
