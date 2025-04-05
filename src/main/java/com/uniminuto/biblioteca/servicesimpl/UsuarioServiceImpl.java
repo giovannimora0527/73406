@@ -91,14 +91,13 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new BadRequestException("El usuario ya existe con el correo "
                     + usuario.getCorreo()
                     + ", Verifique e intente de nuevo.");
-        }     
+        }
         this.usuarioRepository.save(this.convertirUsuarioRqToUsuario(usuario));
         UsuarioRs rta = new UsuarioRs();
         rta.setMessage("Se ha guardado el usuario con exito.");
         return rta;
     }
-    
-    
+
     private Usuario convertirUsuarioRqToUsuario(UsuarioRq usuario) {
         Usuario user = new Usuario();
         user.setNombre(usuario.getNombreCompleto());
@@ -110,8 +109,46 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioRs actualizarUsuario(UsuarioRq usuario) throws BadRequestException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public UsuarioRs actualizarUsuario(Usuario usuario) throws BadRequestException {        
+        Optional<Usuario> optUser = this.usuarioRepository.findById(usuario.getIdUsuario());
+        if (!optUser.isPresent()) {
+            throw new BadRequestException("No existe el usuario.");
+        }
+        UsuarioRs rta = new UsuarioRs();
+        rta.setMessage("El usuario se actualizó correctamente.");
+        Usuario userActual = optUser.get();
+        if (!cambioObjeto(userActual, usuario)) {
+            return rta;
+        }
+
+        if (!usuario.getNombre().equals(userActual.getNombre())) {
+           if (this.usuarioRepository.existsByNombre(usuario.getNombre())) {
+               throw new BadRequestException("El nombre del usuario: " + usuario.getNombre() 
+                       + ", existe en la bd. Verifique e intente de nuevo.");
+           }
+        }
+        if (!usuario.getCorreo().equals(userActual.getCorreo())) {
+            if (this.usuarioRepository.existsByCorreo(usuario.getCorreo())) {
+               throw new BadRequestException("El correo del usuario: " + usuario.getCorreo() 
+                       + ", existe en la bd. Verifique e intente de nuevo.");
+           }
+        }
+        userActual.setNombre(usuario.getNombre());
+        userActual.setCorreo(usuario.getCorreo());
+        userActual.setTelefono(usuario.getTelefono());
+        userActual.setActivo(usuario.getActivo());
+        this.usuarioRepository.save(userActual);
+        return rta;
+    }
+
+    private boolean cambioObjeto(Usuario userActual, Usuario userFront) {
+        if (!userActual.getNombre().equals(userFront.getNombre())
+                || !userActual.getCorreo().equals(userFront.getCorreo())
+                || !userActual.getTelefono().equals(userFront.getTelefono())
+                || !userActual.getActivo().equals(userFront.getActivo())) {
+            return true;
+        }
+        return false;
     }
 
 }

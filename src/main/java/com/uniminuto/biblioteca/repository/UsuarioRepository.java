@@ -25,5 +25,9 @@ public interface UsuarioRepository extends
      * @return usuario que cumpla con la condicion.
      */    
     Optional<Usuario> findByNombre(String nombre);
+    
+    boolean existsByNombre(String nombre);
+    
+    boolean existsByCorreo(String correo);
 
 }

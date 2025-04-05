@@ -42,6 +42,6 @@ public interface UsuarioService {
      * @return
      * @throws BadRequestException 
      */
-    UsuarioRs actualizarUsuario(UsuarioRq usuario) throws BadRequestException;
+    UsuarioRs actualizarUsuario(Usuario usuario) throws BadRequestException;
     
 }
