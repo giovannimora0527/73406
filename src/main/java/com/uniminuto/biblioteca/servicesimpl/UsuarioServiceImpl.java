@@ -77,10 +77,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioRs guardarUsuarioNuevo(UsuarioRq usuario) throws BadRequestException {
         Optional<Usuario> optUser = this.usuarioRepository
-                .findByNombre(usuario.getNombreCompleto());
+                .findByNombre(usuario.getNombre());
         if (optUser.isPresent()) {
             throw new BadRequestException("El usuario ya existe con el nombre "
-                    + usuario.getNombreCompleto()
+                    + usuario.getNombre()
                     + ", Verifique e intente de nuevo.");
         }
 
@@ -100,7 +100,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private Usuario convertirUsuarioRqToUsuario(UsuarioRq usuario) {
         Usuario user = new Usuario();
-        user.setNombre(usuario.getNombreCompleto());
+        user.setNombre(usuario.getNombre());
         user.setActivo(true);
         user.setFechaRegistro(LocalDateTime.now());
         user.setCorreo(usuario.getCorreo());

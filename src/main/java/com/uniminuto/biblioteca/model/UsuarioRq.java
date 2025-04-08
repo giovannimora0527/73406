@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 public class UsuarioRq {
-   private String nombreCompleto; 
+   private String nombre; 
    private String correo;
    private String telefono;
 }
