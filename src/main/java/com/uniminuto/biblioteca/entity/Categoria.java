@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.uniminuto.biblioteca.entity;
 
 import java.io.Serializable;
@@ -10,17 +14,8 @@ import javax.persistence.Table;
 import lombok.Data;
 
 /**
- * Entidad que representa una categoría dentro del sistema.
- * Se almacena en la tabla 'categoria'.
- * 
- * Cada categoría tiene un identificador único y un nombre descriptivo.
- * 
- * Tabla original en la base de datos:
- * CREATE TABLE `categoria` (
- *   `categoria_id` int(11) NOT NULL AUTO_INCREMENT,
- *   `nombre` varchar(100) NOT NULL,
- *   PRIMARY KEY (`categoria_id`)
- * )
+ *
+ * @author santiago
  */
 @Data
 @Entity

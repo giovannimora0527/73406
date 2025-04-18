@@ -4,6 +4,7 @@
  */
 package com.uniminuto.biblioteca.model;
 
+import java.time.LocalDate;
 import lombok.Data;
 
 /**
@@ -11,7 +12,8 @@ import lombok.Data;
  * @author santiago
  */
 @Data
-public class UsuarioRs {
-    private String message;
+public class AutorRq {
+    private String nombre;
+    private String nacionalidad;
+    private LocalDate fechaNacimiento;
 }
-

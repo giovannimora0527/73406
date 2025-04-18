@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author lmora
+ * @author santiago
  */
 @RestController
 public class BibliotecaApiController implements BibliotecaApi {

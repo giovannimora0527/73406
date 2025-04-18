@@ -11,7 +11,6 @@ import lombok.Data;
  * @author santiago
  */
 @Data
-public class UsuarioRs {
+public class AutorRs {
     private String message;
 }
-

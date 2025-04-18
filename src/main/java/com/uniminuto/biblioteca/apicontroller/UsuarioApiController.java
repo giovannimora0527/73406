@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.uniminuto.biblioteca.apicontroller;
 
 import com.uniminuto.biblioteca.api.UsuarioApi;
@@ -12,8 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
- * @author lmora
+ * Controlador que implementa los métodos definidos en la interfaz UsuarioApi.
+ * Proporciona los endpoints necesarios para gestionar usuarios, como listar usuarios
+ * y obtener usuarios por correo electrónico.
+ * 
+ * @author Santiago
  */
 @RestController
 public class UsuarioApiController implements UsuarioApi {

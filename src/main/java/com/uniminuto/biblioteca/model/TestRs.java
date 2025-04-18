@@ -5,7 +5,7 @@ import lombok.Data;
 
 /**
  *
- * @author lmora
+ * @author santiago
  */
 @Data
 public class TestRs {

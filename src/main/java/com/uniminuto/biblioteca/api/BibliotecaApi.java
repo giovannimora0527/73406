@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  *
- * @author lmora
+ * @author santiago
  */
 @CrossOrigin(origins = "*")
 @RequestMapping("/app")
