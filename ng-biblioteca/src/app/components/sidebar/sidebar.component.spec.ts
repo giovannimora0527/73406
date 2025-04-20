@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { SidebarComponent } from './sidebar.component';
+import { RouterTestingModule } from '@angular/router/testing'; // Importa el RouterTestingModule
 
 describe('SidebarComponent', () => {
   let component: SidebarComponent;
@@ -8,9 +8,9 @@ describe('SidebarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SidebarComponent]
-    })
-    .compileComponents();
+      declarations: [SidebarComponent],  // Aquí está bien el componente
+      imports: [RouterTestingModule]    // Incluimos RouterTestingModule para pruebas de enrutamiento
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SidebarComponent);
     component = fixture.componentInstance;

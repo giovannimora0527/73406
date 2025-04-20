@@ -1,12 +1,7 @@
 <nav>
-    <ul>
-      <li *ngFor="let item of navItems">
-        <a [routerLink]="item.link">{{ item.title }}</a>
-      </li>
-    </ul>
-  </nav>
-  
-  <div class="sidebar-footer">
-    <p>© 2023 Your Company</p>
-  </div>
-  
+  <ul>
+    <li *ngFor="let item of items">
+      <a [routerLink]="item.route" routerLinkActive="active">{{ item.name }}</a>
+    </li>
+  </ul>
+</nav>

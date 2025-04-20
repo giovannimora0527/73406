@@ -2,10 +2,9 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-libros',
+  standalone: true, // ✅ Esto es clave
   imports: [],
   templateUrl: './libros.component.html',
-  styleUrl: './libros.component.css'
+  styleUrls: ['./libros.component.css'] // ❌ era 'styleUrl'
 })
-export class LibrosComponent {
-
-}
+export class LibrosComponent {}
