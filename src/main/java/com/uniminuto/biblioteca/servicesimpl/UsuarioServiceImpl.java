@@ -73,6 +73,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         return EMAIL_PATTERN.matcher(correo).matches();
     }
+    
+    
 
     @Override
     public UsuarioRs guardarUsuarioNuevo(UsuarioRq usuario) throws BadRequestException {
