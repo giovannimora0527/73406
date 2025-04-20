@@ -3,8 +3,8 @@ package com.uniminuto.biblioteca.services;
 import com.uniminuto.biblioteca.model.TestRs;
 
 /**
- *
- * @author lmora
+ * 
+ * @author Michael Conde
  */
 public interface BibliotecaService {
     

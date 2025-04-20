@@ -7,8 +7,12 @@ import java.util.List;
 import org.apache.coyote.BadRequestException;
 
 /**
- *
- * @author lmora
+ * Interfaz de servicio para la entidad Usuario.
+ * Esta interfaz define los métodos que deben ser implementados por cualquier clase
+ * que gestione las operaciones relacionadas con los usuarios en el sistema,
+ * como la obtención de usuarios por correo y la lista completa de usuarios.
+ * 
+ * @author Michael Conde
  */
 public interface UsuarioService {
     

@@ -1,13 +1,17 @@
 package com.uniminuto.biblioteca.services;
 
 import com.uniminuto.biblioteca.entity.Libro;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.apache.coyote.BadRequestException;
 
 /**
- *
- * @author lmora
+ * Interfaz de servicio para la entidad Libro.
+ * Esta interfaz define los métodos que deben ser implementados por cualquier clase
+ * que gestione las operaciones relacionadas con los libros en el sistema,
+ * como la obtención de libros por ID, por autor, por título, o por un rango de fechas.
+ * 
+ * @author Michael Conde
  */
 public interface LibroService {
     /**

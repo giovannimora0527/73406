@@ -5,14 +5,11 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RestController;
 import com.uniminuto.biblioteca.entity.Libro;
 import com.uniminuto.biblioteca.services.LibroService;
+import java.util.Optional;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
-/**
- *
- * @author lmora
- */
 @RestController
 public class LibroApiController implements LibroApi {
 
@@ -32,8 +29,7 @@ public class LibroApiController implements LibroApi {
     }
 
     @Override
-    public ResponseEntity<List<Libro>>
-            obtenerLibroPorAutor(Integer autorId) throws BadRequestException {
+    public ResponseEntity<List<Libro>> obtenerLibroPorAutor(Integer autorId) throws BadRequestException {
         return ResponseEntity.ok(this.libroService.obtenerLibrosPorAutor(autorId));
     }
 

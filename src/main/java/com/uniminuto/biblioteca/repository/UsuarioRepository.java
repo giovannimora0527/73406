@@ -3,11 +3,17 @@ package com.uniminuto.biblioteca.repository;
 import com.uniminuto.biblioteca.entity.Usuario;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /**
- *
- * @author lmora
+ * Repositorio para la entidad Usuario.
+ * Esta interfaz extiende JpaRepository para proporcionar operaciones CRUD
+ * básicas para la entidad Usuario. Incluye un método personalizado para
+ * buscar un usuario por su correo electrónico.
+ * 
+ * @author Michael Conde
  */
+@Repository
 public interface UsuarioRepository extends
         JpaRepository<Usuario, Integer> {
 
