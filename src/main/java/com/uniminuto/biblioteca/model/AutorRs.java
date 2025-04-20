@@ -4,14 +4,13 @@
  */
 package com.uniminuto.biblioteca.model;
 
+import lombok.Data;
+
 /**
  *
- * @author kalet
+ * @author santiago
  */
+@Data
 public class AutorRs {
-
-    public void setMessage(String se_ha_guardado_el_autor_con_éxito) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
+    private String message;
 }

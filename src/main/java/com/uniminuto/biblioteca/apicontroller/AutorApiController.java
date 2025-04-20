@@ -13,19 +13,35 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author lmora
+ * @author kaleth
  */
 @RestController
 public class AutorApiController implements AutorApi {
     /**
      * AutorService.
      */
-    @Autowired
+ @Autowired
     private AutorService autorService;
 
     @Override
     public ResponseEntity<List<Autor>> listarAutores() throws BadRequestException {
-       return ResponseEntity.ok(this.autorService.obtenerListadoAutores());
+        return ResponseEntity.ok(autorService.listarTodo());
+    }
+
+    @Override
+    public ResponseEntity<Autor> buscarAutorPorNombre(String nombre) throws BadRequestException {
+        return ResponseEntity.ok(autorService.buscarPorNombre(nombre));
+    }
+
+    @Override
+    public ResponseEntity<AutorRs> guardarAutor(AutorRq autor) throws BadRequestException {
+        System.out.print(autor);
+        return ResponseEntity.ok(autorService.guardarAutorNuevo(autor));
+    }
+
+    @Override
+    public ResponseEntity<AutorRs> actualizarAutor(Autor autor) throws BadRequestException {
+        return ResponseEntity.ok(autorService.actualizarAutor(autor));
     }
 
     @Override
@@ -38,16 +54,6 @@ public class AutorApiController implements AutorApi {
     @Override
     public ResponseEntity<Autor> listarAutorPorId(Integer autorId) throws BadRequestException {
        return ResponseEntity.ok(this.autorService.obtenerAutorPorId(autorId));
-    }
-    
-    @Override
-    public ResponseEntity<AutorRs> guardarAutor(AutorRq autor) throws BadRequestException {
-        return ResponseEntity.ok(this.autorService.guardarAutorNuevo(autor));
-    }
-
-    @Override
-    public ResponseEntity<AutorRs> actualizarAutor(Autor autor) throws BadRequestException {
-      return ResponseEntity.ok(this.autorService.actualizarAutor(autor));
     }
 
     

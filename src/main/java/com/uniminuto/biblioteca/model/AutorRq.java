@@ -5,23 +5,15 @@
 package com.uniminuto.biblioteca.model;
 
 import java.time.LocalDate;
+import lombok.Data;
 
 /**
  *
- * @author kalet
+ * @author santiago
  */
+@Data
 public class AutorRq {
-
-    public LocalDate getFechaNacimiento() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public String getNacionalidad() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public String getNombre() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
+    private String nombre;
+    private String nacionalidad;
+    private LocalDate fechaNacimiento;
 }

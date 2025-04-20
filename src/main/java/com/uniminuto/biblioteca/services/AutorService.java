@@ -8,28 +8,15 @@ import org.apache.coyote.BadRequestException;
 
 /**
  *
- * @author lmora
+ * @author kaleth
  */
 public interface AutorService {
-    List<Autor> obtenerListadoAutores();
+ List<Autor> listarTodo() throws BadRequestException;
+    Autor buscarPorNombre(String nombre) throws BadRequestException;
+    AutorRs guardarAutorNuevo(AutorRq autor) throws BadRequestException;
+    AutorRs actualizarAutor(Autor autor) throws BadRequestException;
     
     List<Autor> obtenerListadoAutoresPorNacionalidad(String nacionalidad) throws BadRequestException;
     
     Autor obtenerAutorPorId(Integer autorId) throws BadRequestException;
-    
-    /**
-     * 
-     * @param autor
-     * @return
-     * @throws BadRequestException 
-     */
-    AutorRs guardarAutorNuevo(AutorRq autor) throws BadRequestException;
-    
-    /**
-     * 
-     * @param autor
-     * @return
-     * @throws BadRequestException 
-     */
-    AutorRs actualizarAutor(Autor autor) throws BadRequestException;
 }
