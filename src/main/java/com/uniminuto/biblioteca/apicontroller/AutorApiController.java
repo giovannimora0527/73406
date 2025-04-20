@@ -2,7 +2,10 @@ package com.uniminuto.biblioteca.apicontroller;
 
 import com.uniminuto.biblioteca.api.AutorApi;
 import com.uniminuto.biblioteca.entity.Autor;
+import com.uniminuto.biblioteca.model.AutorRq;
+import com.uniminuto.biblioteca.model.AutorRs;
 import com.uniminuto.biblioteca.services.AutorService;
+import com.uniminuto.biblioteca.services.NacionalidadService;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +24,35 @@ public class AutorApiController implements AutorApi {
     @Autowired
     private AutorService autorService;
 
-    @Override
-    public ResponseEntity<List<Autor>> listarAutores() throws BadRequestException {
-       return ResponseEntity.ok(this.autorService.obtenerListadoAutores());
-    }
-
-    @Override
-    public ResponseEntity<List<Autor>> listarAutoresByNacionalidad(String nacionalidad) 
-            throws BadRequestException {
-       return ResponseEntity.ok(this.autorService
-               .obtenerListadoAutoresPorNacionalidad(nacionalidad));
-    }
-
-    @Override
-    public ResponseEntity<Autor> listarAutorPorId(Integer autorId) throws BadRequestException {
-       return ResponseEntity.ok(this.autorService.obtenerAutorPorId(autorId));
-    }
-
+    @Autowired
+    private NacionalidadService nacionalidadService;
     
+    @Override
+public ResponseEntity<List<Autor>> listarAutores() throws BadRequestException {
+    return ResponseEntity.ok(this.autorService.obtenerListadoAutores());
 }
+
+@Override
+public ResponseEntity<List<Autor>> listarAutoresByNacionalidad(String nacionalidad)
+        throws BadRequestException {
+    return ResponseEntity.ok(this.autorService.obtenerListadoAutoresPorNacionalidad(nacionalidad));
+}
+
+@Override
+public ResponseEntity<Autor> listarAutorPorId(Integer autorIds) throws BadRequestException {
+    return ResponseEntity.ok(this.autorService.obtenerAutorPorId(autorIds));
+}
+
+
+    @Override
+public ResponseEntity<AutorRs> guardarAutor(AutorRq autor) throws BadRequestException {
+    return ResponseEntity.ok(this.autorService.guardarAutorNuevo(autor));
+}
+
+    @Override
+public ResponseEntity<AutorRs> actualizarAutor(Autor autor) throws BadRequestException {
+    return ResponseEntity.ok(this.autorService.actualizarAutor(autor));
+}
+
+}
+
