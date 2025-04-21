@@ -11,6 +11,6 @@ import lombok.Data;
 public class AutorRq {
     private String nombre;
     private LocalDate fechaNacimiento;
-    private Integer nacionalidadId; 
+    private String nacionalidadId; 
   
 }

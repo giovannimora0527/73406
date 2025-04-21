@@ -53,7 +53,7 @@ public List<Autor> listarAutor() throws BadRequestException {
     public AutorRs guardarAutorNuevo(AutorRq autorRq) throws BadRequestException {
         AutorRs respuesta = new AutorRs();
 
-        Optional<Nacionalidad> nacionalidad = nacionalidadRepository.findById(autorRq.getNacionalidadId());
+        Optional<Nacionalidad> nacionalidad = nacionalidadRepository.findById(Integer.valueOf(autorRq.getNacionalidadId()));
         if (nacionalidad.isEmpty()) {
             respuesta.setMessage("La nacionalidad con ID " + autorRq.getNacionalidadId() + " no fue encontrada.");
             return respuesta;
