@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Table(name = "nacionalidades") // Asegúrate de que el nombre coincida con la tabla en la base de datos
+@Table(name = "nacionalidad") // Asegúrate de que el nombre coincida con la tabla en la base de datos
 public class Nacionalidad implements Serializable {
 
     private static final long serialVersionUID = 1L;
