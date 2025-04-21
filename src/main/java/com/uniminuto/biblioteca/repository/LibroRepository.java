@@ -1,8 +1,8 @@
 package com.uniminuto.biblioteca.repository;
 
+import com.uniminuto.biblioteca.entity.Autor;
 import com.uniminuto.biblioteca.entity.Libro;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,23 +11,29 @@ import org.springframework.stereotype.Repository;
  * @author lmora
  */
 @Repository
-public interface LibroRepository extends JpaRepository<Libro, Integer> {
-    
-    List<Libro> findByAutor_AutorId(Integer autorId);
-    
-    /**
-     * Busca un libro por su título.
-     * 
-     * @param titulo Título del libro a buscar..
-     */
-    Optional<Libro> findByTitulo(String titulo);
+public interface LibroRepository extends
+        JpaRepository<Libro, Integer> {
     
     /**
-     * Busca libros publicados dentro de un rango de años.
-     * 
-     * @param anioInicio Año de inicio del rango.
-     * @param anioFin Año de fin del rango.
-     * @return Lista de libros publicados entre los años especificados.
+     * Obtiene la lista dado un autor.
+     * @param autor Autor a buscar.
+     * @return Lista de libros.
      */
-    List<Libro> findByAnioPublicacionBetween(Integer anioInicio, Integer anioFin);
+    List<Libro> findByAutor(Autor autor);
+    
+    /**
+     * Busca un libro por su nombre.
+     * @param nombreLibro Nombre del libro a buscar.
+     * @return Libro.
+     */
+    Libro findByTitulo(String nombreLibro);
+    
+    /**
+     * Lista los libros por rango de fecha de publicacion.
+     * @param anioIni Año inicial.
+     * @param anioFin Año final.
+     * @return Lista de libros que cumplen el criterio.
+     */
+    List<Libro> findByAnioPublicacionBetween(Integer anioIni, Integer anioFin);
+    
 }

@@ -1,35 +1,54 @@
 package com.uniminuto.biblioteca.services;
 
 import com.uniminuto.biblioteca.entity.Libro;
+import java.time.LocalDateTime;
 import java.util.List;
+import org.apache.coyote.BadRequestException;
 
+/**
+ *
+ * @author lmora
+ */
 public interface LibroService {
-    List<Libro> listarLibros();
-    
-    Libro obtenerLibroId(Integer libroId);
-    
-     /**
-     * Obtiene una lista de libros de acuerdo con el ID del autor.
-     *
-     * @param autorId Identificador único del autor.
-     * @return Lista de libros escritos por el autor especificado.
-     */
-    List<Libro> obtenerLibrosPorAutor(Integer autorId);
-
     /**
-     * Busca un libro por su título.
-     *
-     * @param titulo Título del libro a buscar.
-     * @return El libro que coincida con el título proporcionado.
+     * Lista todos los libros.
+     * @return Lista de libros registrados.
+     * @throws BadRequestException excepcion.
      */
-    Libro obtenerLibroPorNombre(String titulo);
-
+    List<Libro> listarLibros() throws BadRequestException;
+    
     /**
-     * Obtiene una lista de libros publicados dentro de un rango de años.
-     *
-     * @param anioInicio Año inicial del rango de búsqueda.
-     * @param anioFin Año final del rango de búsqueda.
-     * @return Lista de libros publicados dentro del rango de años especificado.
+     * Obtiene un libro dado su id.
+     * @param libroId Id del libro.
+     * @return Libro.
+     * @throws BadRequestException excepcion.
      */
-    List<Libro> obtenerLibrosPorRangoAnios(Integer anioInicio, Integer anioFin);
+    Libro obtenerLibroId(Integer libroId) throws BadRequestException;
+    
+    /**
+     * Obtiene los libros registrados dado un autor.
+     * @param autorId Id del autor.
+     * @return lista de libros.
+     * @throws BadRequestException excepcion.
+     */
+    List<Libro> obtenerLibrosPorAutor(Integer autorId) throws BadRequestException;
+    
+    
+    /**
+     * Obtiene un libro dado su nombre.
+     * @param nombreLibro Nombre del libro.
+     * @return Libro.
+     * @throws BadRequestException excepcion.
+     */
+    Libro obtenerLibroPorNombre(String nombreLibro) throws BadRequestException;
+    
+    /**
+     * Obtiene el listado de libros dado la fecha de publicacion.
+     * @param anioIni Año inicial de la consulta.
+     * @param anioFin Año final de la consulta.
+     * @return Lista de libros que cumplen con el criterio.
+     * @throws BadRequestException excepcion.
+     */
+    List<Libro> obtenerLibroXRangoPublicacion(Integer anioIni, 
+            Integer anioFin) throws BadRequestException;
 }

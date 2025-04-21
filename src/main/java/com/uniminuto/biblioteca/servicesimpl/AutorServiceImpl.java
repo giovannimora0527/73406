@@ -1,9 +1,10 @@
 package com.uniminuto.biblioteca.servicesimpl;
 
 import com.uniminuto.biblioteca.entity.Autor;
+import com.uniminuto.biblioteca.model.AutorRq;
+import com.uniminuto.biblioteca.model.AutorRs;
 import com.uniminuto.biblioteca.repository.AutorRepository;
 import com.uniminuto.biblioteca.services.AutorService;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.apache.coyote.BadRequestException;
@@ -47,5 +48,70 @@ public class AutorServiceImpl implements AutorService {
         }
         return optAutor.get();
     }
+    
+    @Override
+    public AutorRs guardarAutorNuevo(AutorRq autor) throws BadRequestException {
+        Optional<Autor> optAutor = this.autorRepository
+                .findByNombre(autor.getNombre());
 
+        if (optAutor.isPresent()) {
+            throw new BadRequestException("El autor ya existe con el nombre "
+                    + autor.getNombre()
+                    + ", verifique e intente de nuevo.");
+        }
+
+        this.autorRepository.save(this.convertirAutorRqToAutor(autor));
+        AutorRs rta = new AutorRs();
+        rta.setMessage("Se ha guardado el autor con éxito.");
+        return rta;
+    }
+
+    private Autor convertirAutorRqToAutor(AutorRq autor) {
+        Autor a = new Autor();
+        a.setNombre(autor.getNombre());
+        a.setNacionalidad(autor.getNacionalidad());
+        a.setFechaNacimiento(autor.getFechaNacimiento());
+        return a;
+    }
+
+    @Override
+    public AutorRs actualizarAutor(Autor autor) throws BadRequestException {
+        Optional<Autor> optAutor = this.autorRepository.findById(autor.getAutorId());
+
+        if (!optAutor.isPresent()) {
+            throw new BadRequestException("No existe el autor.");
+        }
+
+        AutorRs rta = new AutorRs();
+        rta.setMessage("El autor se actualizó correctamente.");
+
+        Autor autorActual = optAutor.get();
+        
+
+        if (!cambioObjeto(autorActual, autor)) {
+            return rta; // no hubo cambios, no hace falta guardar
+        }
+
+        if (!autor.getNombre().equals(autorActual.getNombre())) {
+            if (this.autorRepository.existsByNombre(autor.getNombre())) {
+                throw new BadRequestException("El nombre del autor: " + autor.getNombre()
+                        + ", ya existe en la base de datos. Verifique e intente de nuevo.");
+            }
+        }
+
+        autorActual.setNombre(autor.getNombre());
+        autorActual.setNacionalidad(autor.getNacionalidad());
+        autorActual.setFechaNacimiento(autor.getFechaNacimiento());
+
+        this.autorRepository.save(autorActual);
+        return rta;
+    }
+
+    private boolean cambioObjeto(Autor actual, Autor nuevo) {
+        return !actual.getNombre().equals(nuevo.getNombre())
+            || !actual.getNacionalidad().equals(nuevo.getNacionalidad())
+        || !actual.getFechaNacimiento().equals(nuevo.getFechaNacimiento());
+            
+
+    }
 }

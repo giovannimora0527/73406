@@ -1,65 +1,154 @@
 package com.uniminuto.biblioteca.servicesimpl;
 
 import com.uniminuto.biblioteca.entity.Usuario;
+import com.uniminuto.biblioteca.model.UsuarioRq;
+import com.uniminuto.biblioteca.model.UsuarioRs;
 import com.uniminuto.biblioteca.repository.UsuarioRepository;
 import com.uniminuto.biblioteca.services.UsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.coyote.BadRequestException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
- * @author 1031794_sofia_pedraza
+ * @author lmora
  */
-
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
+    /**
+     * Patron para validar email.
+     */
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
+    /**
+     * Regex para validacion de email.
+     */
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
+
+    /**
+     * Repositorio de usuario.
+     */
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    /**
-     * Obtiene la lista de todos los usuarios registrados en la base de datos.
-     *
-     * @return Lista de usuarios.
-     */
     @Override
-    public List<Usuario> obtenerUsuarios() {
-        return usuarioRepository.findAll();
+    public List<Usuario> listarTodo() throws BadRequestException {
+        return this.usuarioRepository.findAll();
     }
-    
-    /**
-     * Busca un usuario por su correo electrónico.
-     *
-     * @param correo Correo electrónico del usuario a buscar.
-     * @return Un {@code Optional<Usuario>} que contiene el usuario si se encuentra.
-     * @throws BadRequestException Si el correo está vacío o si el usuario no se encuentra.
-     */
+
     @Override
-    public Optional<Usuario> obtenerUsuarioPorCorreo(String correo) throws BadRequestException {
-        if (correo == null || correo.isEmpty()) {
-            throw new BadRequestException("El correo no puede estar vacío.");
-        }
-        
-        // Expresión regular para validar el formato de un correo electrónico
-        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        Pattern pattern = Pattern.compile(emailRegex);
-        Matcher matcher = pattern.matcher(correo);
-
-        if (!matcher.matches()) {
-            throw new BadRequestException("El formato del correo es inválido: " + correo);
-        }
-        
-        Optional<Usuario> usuario = usuarioRepository.findByCorreo(correo);
-
-        if (!usuario.isPresent()) {
-            throw new BadRequestException("No se encontró un usuario con el correo: " + correo);
+    public Usuario buscarPorCorreo(String correo) throws BadRequestException {
+        if (correo == null || correo.isBlank()) {
+            throw new BadRequestException("El correo: " + correo + ", no cumple "
+                    + "la validación para ser un correo valido.");
         }
 
-        return usuario;
+        boolean isValidoEmail = this.validarCorreo(correo);
+        if (!isValidoEmail) {
+            throw new BadRequestException("El correo no es valido.");
+        }
+
+        Optional<Usuario> optUsuario = this.usuarioRepository
+                .findByCorreo(correo);
+        if (!optUsuario.isPresent()) {
+            throw new BadRequestException("No hay registros de usuarios "
+                    + "registrados con el correo ingresado.");
+        }
+        return optUsuario.get();
     }
+
+    /**
+     *
+     * @param correo
+     * @return
+     */
+    public boolean validarCorreo(String correo) {
+        if (correo == null || correo.isBlank()) {
+            return false;
+        }
+        return EMAIL_PATTERN.matcher(correo).matches();
+    }
+
+    @Override
+    public UsuarioRs guardarUsuarioNuevo(UsuarioRq usuario) throws BadRequestException {
+        Optional<Usuario> optUser = this.usuarioRepository
+                .findByNombre(usuario.getNombre());
+        if (optUser.isPresent()) {
+            throw new BadRequestException("El usuario ya existe con el nombre "
+                    + usuario.getNombre()
+                    + ", Verifique e intente de nuevo.");
+        }
+
+        optUser = this.usuarioRepository
+                .findByCorreo(usuario.getCorreo());
+
+        if (optUser.isPresent()) {
+            throw new BadRequestException("El usuario ya existe con el correo "
+                    + usuario.getCorreo()
+                    + ", Verifique e intente de nuevo.");
+        }
+        this.usuarioRepository.save(this.convertirUsuarioRqToUsuario(usuario));
+        UsuarioRs rta = new UsuarioRs();
+        rta.setMessage("Se ha guardado el usuario con exito.");
+        return rta;
+    }
+
+    private Usuario convertirUsuarioRqToUsuario(UsuarioRq usuario) {
+        Usuario user = new Usuario();
+        user.setNombre(usuario.getNombre());
+        user.setActivo(true);
+        user.setFechaRegistro(LocalDateTime.now());
+        user.setCorreo(usuario.getCorreo());
+        user.setTelefono(usuario.getTelefono());
+        return user;
+    }
+
+    @Override
+    public UsuarioRs actualizarUsuario(Usuario usuario) throws BadRequestException {        
+        Optional<Usuario> optUser = this.usuarioRepository.findById(usuario.getIdUsuario());
+        if (!optUser.isPresent()) {
+            throw new BadRequestException("No existe el usuario.");
+        }
+        UsuarioRs rta = new UsuarioRs();
+        rta.setMessage("El usuario se actualizó correctamente.");
+        Usuario userActual = optUser.get();
+        if (!cambioObjeto(userActual, usuario)) {
+            return rta;
+        }
+
+        if (!usuario.getNombre().equals(userActual.getNombre())) {
+           if (this.usuarioRepository.existsByNombre(usuario.getNombre())) {
+               throw new BadRequestException("El nombre del usuario: " + usuario.getNombre() 
+                       + ", existe en la bd. Verifique e intente de nuevo.");
+           }
+        }
+        if (!usuario.getCorreo().equals(userActual.getCorreo())) {
+            if (this.usuarioRepository.existsByCorreo(usuario.getCorreo())) {
+               throw new BadRequestException("El correo del usuario: " + usuario.getCorreo() 
+                       + ", existe en la bd. Verifique e intente de nuevo.");
+           }
+        }
+        userActual.setNombre(usuario.getNombre());
+        userActual.setCorreo(usuario.getCorreo());
+        userActual.setTelefono(usuario.getTelefono());
+        userActual.setActivo(usuario.getActivo());
+        this.usuarioRepository.save(userActual);
+        return rta;
+    }
+
+    private boolean cambioObjeto(Usuario userActual, Usuario userFront) {
+        if (!userActual.getNombre().equals(userFront.getNombre())
+                || !userActual.getCorreo().equals(userFront.getCorreo())
+                || !userActual.getTelefono().equals(userFront.getTelefono())
+                || !userActual.getActivo().equals(userFront.getActivo())) {
+            return true;
+        }
+        return false;
+    }
+
 }
