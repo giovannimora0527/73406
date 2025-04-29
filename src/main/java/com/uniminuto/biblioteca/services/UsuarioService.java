@@ -12,12 +12,16 @@ import org.apache.coyote.BadRequestException;
  */
 public interface UsuarioService {
     
+    
     /**
      * Servicio para listar todos los usuarios del sistema.
      * @return Lista de usuarios registrados.
      * @throws BadRequestException Excepcion.
      */
-    List<Usuario> listarTodo() throws BadRequestException;
+    
+     List<Usuario> listarUsuario(String nombre) throws BadRequestException;
+     
+     
     
     /**
      * Busca un usuario dado un email.

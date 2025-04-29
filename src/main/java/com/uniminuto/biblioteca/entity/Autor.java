@@ -39,12 +39,11 @@ public class Autor implements Serializable {
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
     
-    /**
-     * Nacionalidad del autor.
-     */
+     /** Nacionalidad a la que pertenece el autor. */   
     @ManyToOne
-    @JoinColumn(name = "nacionalidad_id", referencedColumnName = "nacionalidad_id") // Asegúrate de que coincida con la columna en la tabla
+    @JoinColumn(name = "nacionalidad_id", referencedColumnName = "nacionalidad_id")
     private Nacionalidad nacionalidad;
+        
     
     /**
      * Fecha de nacimiento del autor.

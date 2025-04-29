@@ -9,8 +9,9 @@ import lombok.Data;
  */
 @Data
 public class AutorRq {
+    private Integer autorId;
     private String nombre;
     private LocalDate fechaNacimiento;
-    private String nacionalidadId; 
+    private Integer nacionalidadId; 
   
 }

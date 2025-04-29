@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
      * 
      */
     @Repository
-    public interface NacionalidadRepository extends JpaRepository<Nacionalidad, Integer> {
-        Optional<Nacionalidad> findByNombre(String nombre);
-    }
+    public interface NacionalidadRepository extends
+        JpaRepository<Nacionalidad, Integer> {
+}

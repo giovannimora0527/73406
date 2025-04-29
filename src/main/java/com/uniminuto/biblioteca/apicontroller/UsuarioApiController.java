@@ -25,8 +25,8 @@ public class UsuarioApiController implements UsuarioApi {
     private UsuarioService usuarioService;
 
     @Override
-    public ResponseEntity<List<Usuario>> listarUsuarios() throws BadRequestException {
-        return ResponseEntity.ok(this.usuarioService.listarTodo());
+    public ResponseEntity<List<Usuario>> listarUsuarios(String nombre) throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioService.listarUsuario(nombre));
     }
 
     @Override
