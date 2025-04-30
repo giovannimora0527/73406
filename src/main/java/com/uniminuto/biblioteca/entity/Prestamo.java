@@ -22,11 +22,11 @@ public class Prestamo implements Serializable {
     private Integer idPrestamo;
     
     @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     private Usuario usuario;
     
     @ManyToOne
-    @JoinColumn(name = "id_libro", nullable = false)
+    @JoinColumn(name = "id_libro", referencedColumnName = "id_libro")
     private Libro libro;
     
     @Column(name = "fecha_prestamo", nullable = false)
@@ -44,6 +44,7 @@ public class Prestamo implements Serializable {
     
     public enum EstadoPrestamo {
         PRESTADO,
-        DEVUELTO
+        DEVUELTO,
+        VENCIDO
     }
 }
