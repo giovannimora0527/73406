@@ -1,6 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+/**
+ * Implementación del controlador API para manejar las operaciones relacionadas con los préstamos.
+ * 
+ * <p>Esta clase es responsable de procesar las solicitudes HTTP para las operaciones de préstamo,
+ * como listar los préstamos, guardar un nuevo préstamo y actualizar un préstamo existente.</p>
+ * 
+ * <p>Utiliza el servicio {@link PrestamoService} para realizar las acciones correspondientes en el backend.</p>
+ * 
+ * @author Santiago
+ * @version 1.0
  */
 package com.uniminuto.biblioteca.apicontroller;
 
@@ -16,11 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
- * @author santiago
- */
-/**
- * Implementación del API para las operaciones sobre préstamos.
+ * Controlador API que implementa las operaciones relacionadas con los préstamos.
  */
 @RestController
 public class PrestamoApiController implements PrestamoApi {
@@ -28,17 +31,37 @@ public class PrestamoApiController implements PrestamoApi {
     @Autowired
     private PrestamoService prestamoService;
 
+    /**
+     * Obtiene la lista de todos los préstamos registrados en el sistema.
+     * 
+     * @return ResponseEntity con la lista de préstamos
+     * @throws BadRequestException si ocurre un error durante la consulta
+     */
     @Override
     public ResponseEntity<List<Prestamo>> listarPrestamos() throws BadRequestException {
         return ResponseEntity.ok(prestamoService.listarTodos());
     }
 
+    /**
+     * Guarda un nuevo préstamo en el sistema.
+     * 
+     * @param prestamoRq datos del nuevo préstamo
+     * @return ResponseEntity con el mensaje de éxito o error de la operación
+     * @throws BadRequestException si el préstamo no puede ser guardado debido a un error
+     */
     @Override
     public ResponseEntity<PrestamoRs> guardarPrestamo(PrestamoRq prestamoRq) throws BadRequestException {
         PrestamoRs response = prestamoService.guardarPrestamoNuevo(prestamoRq);
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Actualiza un préstamo existente en el sistema.
+     * 
+     * @param prestamo datos del préstamo a actualizar
+     * @return ResponseEntity con el mensaje de éxito o error de la operación
+     * @throws BadRequestException si el préstamo no puede ser actualizado debido a un error
+     */
     @Override
     public ResponseEntity<PrestamoRs> actualizarPrestamo(Prestamo prestamo) throws BadRequestException {
         PrestamoRs response = prestamoService.actualizarPrestamo(prestamo);
