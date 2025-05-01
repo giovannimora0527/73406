@@ -16,7 +16,7 @@ public interface PrestamoService {
     PrestamoRs obtenerPrestamoPorId(Integer idPrestamo) throws BadRequestException;  // CAMBIAR: Prestamo -> PrestamoRs
 
     // Registrar nuevo préstamo
-    PrestamoRs registrarPrestamo(PrestamoRq prestamo) throws BadRequestException;
+    PrestamoRs guardarPrestamo(PrestamoRq prestamo) throws BadRequestException;
 
     // Actualizar préstamo existente
     PrestamoRs actualizarPrestamo(PrestamoRq prestamo) throws BadRequestException;

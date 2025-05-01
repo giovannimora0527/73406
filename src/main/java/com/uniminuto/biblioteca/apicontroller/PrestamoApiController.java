@@ -27,14 +27,14 @@ public class PrestamoApiController implements PrestamoApi {
         return ResponseEntity.ok(prestamoService.obtenerPrestamoPorId(idPrestamo));
     }
 
-    @Override
-    public ResponseEntity<PrestamoRs> registrarPrestamo(PrestamoRq prestamo) throws BadRequestException {
-        return ResponseEntity.ok(prestamoService.registrarPrestamo(prestamo));
+     @Override
+    public ResponseEntity<PrestamoRs> guardarPrestamo(PrestamoRq prestamoRq) throws BadRequestException {
+        return ResponseEntity.ok(prestamoService.guardarPrestamo(prestamoRq));
     }
 
     @Override
-    public ResponseEntity<PrestamoRs> actualizarPrestamo(PrestamoRq prestamo) throws BadRequestException {
-        return ResponseEntity.ok(prestamoService.actualizarPrestamo(prestamo));
+    public ResponseEntity<PrestamoRs> actualizarPrestamo(PrestamoRq prestamoRq) throws BadRequestException {
+        return ResponseEntity.ok(prestamoService.actualizarPrestamo(prestamoRq));
     }
 
     @Override

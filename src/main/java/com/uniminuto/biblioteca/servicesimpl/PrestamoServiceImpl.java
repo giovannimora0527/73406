@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PrestamoServiceImpl implements PrestamoService {
@@ -31,7 +30,7 @@ public class PrestamoServiceImpl implements PrestamoService {
     @Autowired
     private LibroRepository libroRepository;
 
-    // 🔵 Método privado para mapear de entidad Prestamo a DTO PrestamoRs
+    // Método para convertir entidad Prestamo a DTO PrestamoRs
     private PrestamoRs mapPrestamoToPrestamoRs(Prestamo prestamo) {
         PrestamoRs prestamoRs = new PrestamoRs();
         prestamoRs.setIdPrestamo(prestamo.getIdPrestamo());
@@ -56,80 +55,92 @@ public class PrestamoServiceImpl implements PrestamoService {
     @Override
     public List<PrestamoRs> obtenerListadoPrestamos() {
         return prestamoRepository.findAll()
-            .stream()
-            .map(this::mapPrestamoToPrestamoRs)
-            .toList();
+                .stream()
+                .map(this::mapPrestamoToPrestamoRs)
+                .toList();
     }
 
     @Override
     public PrestamoRs obtenerPrestamoPorId(Integer idPrestamo) throws BadRequestException {
         Prestamo prestamo = prestamoRepository.findById(idPrestamo)
-            .orElseThrow(() -> new BadRequestException("No se encuentra el préstamo con el ID " + idPrestamo));
+                .orElseThrow(() -> new BadRequestException("No se encuentra el préstamo con el ID " + idPrestamo));
         return mapPrestamoToPrestamoRs(prestamo);
     }
 
     @Override
-    public PrestamoRs registrarPrestamo(PrestamoRq prestamoRq) throws BadRequestException {
-        Usuario usuario = usuarioRepository.findById(prestamoRq.getIdUsuario())
-                .orElseThrow(() -> new BadRequestException("Usuario no encontrado"));
+public PrestamoRs guardarPrestamo(PrestamoRq prestamoRq) throws BadRequestException {
+    Usuario usuario = usuarioRepository.findById(prestamoRq.getIdUsuario())
+            .orElseThrow(() -> new BadRequestException("Usuario no encontrado"));
 
-        Libro libro = libroRepository.findById(prestamoRq.getIdLibro())
-                .orElseThrow(() -> new BadRequestException("Libro no encontrado"));
+    Libro libro = libroRepository.findById(prestamoRq.getIdLibro())
+            .orElseThrow(() -> new BadRequestException("Libro no encontrado"));
 
-        if (prestamoRepository.existsByLibroIdLibroAndEstado(prestamoRq.getIdLibro(), EstadoPrestamo.PRESTADO)) {
-            throw new BadRequestException("El libro ya está prestado");
-        }
-
-        if (prestamoRepository.countByUsuarioIdUsuarioAndEstado(prestamoRq.getIdUsuario(), EstadoPrestamo.PRESTADO) >= 3) {
-            throw new BadRequestException("El usuario ya tiene el máximo de 3 préstamos activos");
-        }
-
-        Prestamo prestamo = new Prestamo();
-        prestamo.setUsuario(usuario);
-        prestamo.setLibro(libro);
-        prestamo.setFechaPrestamo(LocalDateTime.now());
-        prestamo.setFechaDevolucion(prestamoRq.getFechaDevolucion());
-        prestamo.setEstado(EstadoPrestamo.PRESTADO);
-
-        prestamoRepository.save(prestamo);
-
-        PrestamoRs response = new PrestamoRs();
-        response.setMessage("Préstamo registrado con éxito");
-        return response;
+    long prestamosActivos = prestamoRepository.countByLibroIdLibroAndEstado(prestamoRq.getIdLibro(), EstadoPrestamo.PRESTADO);
+    if (prestamosActivos >= libro.getExistencias()) {
+        throw new BadRequestException("No hay ejemplares disponibles para este libro");
     }
+
+    if (prestamoRepository.countByUsuarioIdUsuarioAndEstado(prestamoRq.getIdUsuario(), EstadoPrestamo.PRESTADO) >= 3) {
+        throw new BadRequestException("El usuario ya tiene el máximo de 3 préstamos activos");
+    }
+
+    Prestamo prestamo = new Prestamo();
+    prestamo.setUsuario(usuario);
+    prestamo.setLibro(libro);
+    prestamo.setFechaPrestamo(LocalDateTime.now());
+    prestamo.setFechaDevolucion(prestamoRq.getFechaDevolucion());
+    prestamo.setEstado(EstadoPrestamo.PRESTADO); // Fijo y no modificable al crear
+
+    prestamoRepository.save(prestamo);
+
+    PrestamoRs response = new PrestamoRs();
+    response.setMessage("Préstamo registrado con éxito");
+    return response;
+}
+
+
 
     @Override
-    public PrestamoRs actualizarPrestamo(PrestamoRq prestamoRq) throws BadRequestException {
-        Prestamo prestamo = prestamoRepository.findById(prestamoRq.getIdPrestamo())
-                .orElseThrow(() -> new BadRequestException("Préstamo no encontrado"));
+public PrestamoRs actualizarPrestamo(PrestamoRq prestamoRq) throws BadRequestException {
+    Prestamo prestamo = prestamoRepository.findById(prestamoRq.getIdPrestamo())
+            .orElseThrow(() -> new BadRequestException("Préstamo no encontrado"));
 
-        if (prestamoRq.getIdUsuario() != null) {
-            Usuario usuario = usuarioRepository.findById(prestamoRq.getIdUsuario())
-                    .orElseThrow(() -> new BadRequestException("Usuario no encontrado"));
-            prestamo.setUsuario(usuario);
-        }
-
-        if (prestamoRq.getIdLibro() != null) {
-            Libro libro = libroRepository.findById(prestamoRq.getIdLibro())
-                    .orElseThrow(() -> new BadRequestException("Libro no encontrado"));
-            prestamo.setLibro(libro);
-        }
-
-        if (prestamoRq.getFechaDevolucion() != null) {
-            prestamo.setFechaDevolucion(prestamoRq.getFechaDevolucion());
-        }
-
-        if (prestamoRq.getFechaEntrega() != null) {
-            prestamo.setFechaEntrega(prestamoRq.getFechaEntrega());
-            prestamo.setEstado(EstadoPrestamo.DEVUELTO);
-        }
-
-        prestamoRepository.save(prestamo);
-
-        PrestamoRs response = new PrestamoRs();
-        response.setMessage("Préstamo actualizado con éxito");
-        return response;
+    if (prestamoRq.getIdUsuario() != null) {
+        Usuario usuario = usuarioRepository.findById(prestamoRq.getIdUsuario())
+                .orElseThrow(() -> new BadRequestException("Usuario no encontrado"));
+        prestamo.setUsuario(usuario);
     }
+
+    if (prestamoRq.getIdLibro() != null) {
+        Libro libro = libroRepository.findById(prestamoRq.getIdLibro())
+                .orElseThrow(() -> new BadRequestException("Libro no encontrado"));
+        prestamo.setLibro(libro);
+    }
+
+    if (prestamoRq.getFechaDevolucion() != null) {
+        prestamo.setFechaDevolucion(prestamoRq.getFechaDevolucion());
+    }
+
+    if (prestamoRq.getFechaEntrega() != null) {
+        prestamo.setFechaEntrega(prestamoRq.getFechaEntrega());
+
+        // ✅ Verificar si se entregó después de la fecha de devolución
+        if (prestamoRq.getFechaEntrega().isAfter(prestamo.getFechaDevolucion())) {
+            prestamo.setEstado(EstadoPrestamo.VENCIDO);
+        } else {
+            prestamo.setEstado(EstadoPrestamo.DEVUELTO); // Opcional si quieres marcarlo como devuelto en caso contrario
+        }
+    }
+
+    prestamoRepository.save(prestamo);
+
+    PrestamoRs response = new PrestamoRs();
+    response.setMessage("Préstamo actualizado con éxito");
+    return response;
+}
+
+
+
 
     @Override
     public PrestamoRs registrarDevolucion(Integer idPrestamo) throws BadRequestException {
@@ -156,9 +167,9 @@ public class PrestamoServiceImpl implements PrestamoService {
             throw new BadRequestException("Usuario no encontrado");
         }
         return prestamoRepository.findByUsuarioIdUsuario(idUsuario)
-            .stream()
-            .map(this::mapPrestamoToPrestamoRs)
-            .toList();
+                .stream()
+                .map(this::mapPrestamoToPrestamoRs)
+                .toList();
     }
 
     @Override
@@ -167,16 +178,16 @@ public class PrestamoServiceImpl implements PrestamoService {
             throw new BadRequestException("Libro no encontrado");
         }
         return prestamoRepository.findByLibroIdLibro(idLibro)
-            .stream()
-            .map(this::mapPrestamoToPrestamoRs)
-            .toList();
+                .stream()
+                .map(this::mapPrestamoToPrestamoRs)
+                .toList();
     }
 
     @Override
     public List<PrestamoRs> obtenerPrestamosVencidos() {
         return prestamoRepository.findByFechaDevolucionBeforeAndEstado(LocalDate.now(), EstadoPrestamo.PRESTADO)
-            .stream()
-            .map(this::mapPrestamoToPrestamoRs)
-            .toList();
+                .stream()
+                .map(this::mapPrestamoToPrestamoRs)
+                .toList();
     }
 }

@@ -27,4 +27,6 @@ public interface PrestamoRepository extends JpaRepository<Prestamo, Integer> {
     
     // Contar préstamos activos de un usuario
     long countByUsuarioIdUsuarioAndEstado(Integer idUsuario, EstadoPrestamo estado);
+    long countByLibroIdLibroAndEstado(Integer idLibro, EstadoPrestamo estado);
+
 }

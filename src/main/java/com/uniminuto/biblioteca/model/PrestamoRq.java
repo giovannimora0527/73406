@@ -10,6 +10,6 @@ public class PrestamoRq {
     private Integer idLibro;
     private LocalDate fechaDevolucion;
     private LocalDate fechaEntrega;
-
+    private String estado;
     }
 

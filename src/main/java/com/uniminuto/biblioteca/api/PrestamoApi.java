@@ -24,20 +24,20 @@ public interface PrestamoApi {
             method = RequestMethod.GET)
     ResponseEntity<PrestamoRs> obtenerPrestamoPorId(@RequestParam Integer idPrestamo) throws BadRequestException;
 
-    @RequestMapping(
-            value = "/registrar",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.POST)
-    ResponseEntity<PrestamoRs> registrarPrestamo(@RequestBody PrestamoRq prestamo) throws BadRequestException;
+@PostMapping(
+        value = "/guardar-prestamo",
+        consumes = "application/json",
+        produces = "application/json"
+    )
+    ResponseEntity<PrestamoRs> guardarPrestamo(@RequestBody PrestamoRq prestamoRq) throws BadRequestException;
 
-    @RequestMapping(
-            value = "/actualizar",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.PUT)
-    ResponseEntity<PrestamoRs> actualizarPrestamo(@RequestBody PrestamoRq prestamo) throws BadRequestException;
-
+    @PostMapping(
+        value = "/actualizar-prestamo",
+        consumes = "application/json",
+        produces = "application/json"
+    )
+    ResponseEntity<PrestamoRs> actualizarPrestamo(@RequestBody PrestamoRq prestamoRq) throws BadRequestException;
+    
     @RequestMapping(
             value = "/devolver",
             produces = {"application/json"},
