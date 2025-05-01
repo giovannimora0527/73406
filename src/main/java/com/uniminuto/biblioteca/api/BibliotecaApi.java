@@ -22,7 +22,6 @@ public interface BibliotecaApi {
      */
     @RequestMapping(value = "/test",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<TestRs> testService()
             throws BadRequestException;

@@ -34,7 +34,6 @@ public interface UsuarioApi {
      */
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<Usuario>> listarUsuarios()
             throws BadRequestException;
@@ -48,7 +47,6 @@ public interface UsuarioApi {
      */
     @RequestMapping(value = "/buscar-por-correo",
             produces = {"application/json"},
-            consumes = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<Usuario> buscarUsuarioPorEmail(
             @RequestParam String correo)

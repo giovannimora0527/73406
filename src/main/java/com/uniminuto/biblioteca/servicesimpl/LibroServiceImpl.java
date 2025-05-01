@@ -2,6 +2,7 @@ package com.uniminuto.biblioteca.servicesimpl;
 
 import com.uniminuto.biblioteca.entity.Autor;
 import com.uniminuto.biblioteca.entity.Libro;
+import com.uniminuto.biblioteca.entity.LibroDisponibleProjection;
 import com.uniminuto.biblioteca.repository.AutorRepository;
 import com.uniminuto.biblioteca.repository.LibroRepository;
 import com.uniminuto.biblioteca.services.AutorService;
@@ -16,10 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * Implementación del servicio de libros.
- * Esta clase maneja la lógica de negocio relacionada con los libros en el sistema,
- * incluyendo la obtención de libros por autor, título y rangos de fechas de publicación.
- * 
+ * Implementación del servicio de libros. Esta clase maneja la lógica de negocio
+ * relacionada con los libros en el sistema, incluyendo la obtención de libros
+ * por autor, título y rangos de fechas de publicación.
+ *
  * @author santiago
  */
 @Service
@@ -90,5 +91,10 @@ public class LibroServiceImpl implements LibroService {
 
         return this.libroRepository.findByAnioPublicacionBetween(fechaInicio, fechaFin);
     }
-}
 
+    @Override
+    public List<LibroDisponibleProjection> obtenerLibrosDisponibles() throws BadRequestException {
+        return this.libroRepository.findLibrosDisponibles();
+    }
+
+}

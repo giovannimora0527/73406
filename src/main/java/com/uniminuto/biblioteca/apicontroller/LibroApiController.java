@@ -4,6 +4,7 @@ import com.uniminuto.biblioteca.api.LibroApi;
 import java.util.List;
 import org.springframework.web.bind.annotation.RestController;
 import com.uniminuto.biblioteca.entity.Libro;
+import com.uniminuto.biblioteca.entity.LibroDisponibleProjection;
 import com.uniminuto.biblioteca.services.LibroService;
 import java.util.Optional;
 import org.apache.coyote.BadRequestException;
@@ -12,10 +13,10 @@ import org.springframework.http.ResponseEntity;
 
 /**
  * Controlador que implementa los métodos definidos en la interfaz LibroApi.
- * Proporciona los endpoints necesarios para gestionar libros,
- * como listar libros, obtener libros por ID, título o autor, 
- * y listar libros en un rango de fechas.
- * 
+ * Proporciona los endpoints necesarios para gestionar libros, como listar
+ * libros, obtener libros por ID, título o autor, y listar libros en un rango de
+ * fechas.
+ *
  * @author Santiago
  */
 @RestController
@@ -54,6 +55,12 @@ public class LibroApiController implements LibroApi {
             throws BadRequestException {
         return ResponseEntity.ok(this.libroService
                 .obtenerLibroXRangoPublicacion(anioIni, anioFin));
+    }
+
+    @Override
+    public ResponseEntity<List<LibroDisponibleProjection>> listarLibrosDisponibles()
+            throws BadRequestException {
+        return ResponseEntity.ok(this.libroService.obtenerLibrosDisponibles());
     }
 
 }
