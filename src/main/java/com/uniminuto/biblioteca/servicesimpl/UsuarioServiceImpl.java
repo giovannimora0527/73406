@@ -35,11 +35,13 @@ public class UsuarioServiceImpl implements UsuarioService {
      */
     @Autowired
     private UsuarioRepository usuarioRepository;
-
+    
+    
     @Override
-    public List<Usuario> listarTodo() throws BadRequestException {
-        return this.usuarioRepository.findAll();
+    public List<Usuario> listarUsuario(String nombre) throws BadRequestException {
+        return usuarioRepository.findAll();
     }
+    
 
     @Override
     public Usuario buscarPorCorreo(String correo) throws BadRequestException {

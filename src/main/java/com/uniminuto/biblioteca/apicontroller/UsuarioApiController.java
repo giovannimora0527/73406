@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ *
+ * @author lmora
+ */
 @RestController
 public class UsuarioApiController implements UsuarioApi {
 
@@ -22,8 +25,8 @@ public class UsuarioApiController implements UsuarioApi {
     private UsuarioService usuarioService;
 
     @Override
-    public ResponseEntity<List<Usuario>> listarUsuarios() throws BadRequestException {
-        return ResponseEntity.ok(this.usuarioService.listarTodo());
+    public ResponseEntity<List<Usuario>> listarUsuarios(String nombre) throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioService.listarUsuario(nombre));
     }
 
     @Override

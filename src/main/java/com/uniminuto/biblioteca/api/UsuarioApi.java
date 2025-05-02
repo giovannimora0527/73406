@@ -23,6 +23,7 @@ public interface UsuarioApi {
     /**
      * Metodo para listar los autores registrados en bd.
      *
+     * @param nombre
      * @return Lista de autores.
      * @throws BadRequestException excepcion.
      */
@@ -30,7 +31,7 @@ public interface UsuarioApi {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.GET)
-    ResponseEntity<List<Usuario>> listarUsuarios()
+    ResponseEntity<List<Usuario>> listarUsuarios(String nombre)
             throws BadRequestException;
 
     /**

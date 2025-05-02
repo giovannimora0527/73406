@@ -10,11 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * Interfaz que define los métodos de la API para la gestión de libros.
- * Permite realizar operaciones como listar libros, obtener libros por su ID,
- * por autor, por título y por rango de fechas.
- * 
- * @author Santiago
+ *
+ * @author lmora
  */
 @CrossOrigin(origins = "*")
 @RequestMapping("/libro")

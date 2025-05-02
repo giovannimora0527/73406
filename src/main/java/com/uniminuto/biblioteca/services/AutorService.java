@@ -1,6 +1,7 @@
 package com.uniminuto.biblioteca.services;
 
 import com.uniminuto.biblioteca.entity.Autor;
+import com.uniminuto.biblioteca.entity.Nacionalidad;
 import com.uniminuto.biblioteca.model.AutorRq;
 import com.uniminuto.biblioteca.model.AutorRs;
 import java.util.List;
@@ -8,15 +9,39 @@ import org.apache.coyote.BadRequestException;
 
 /**
  *
- * @author kaleth
+ * @author lmora
  */
+
 public interface AutorService {
- List<Autor> listarTodo() throws BadRequestException;
-    Autor buscarPorNombre(String nombre) throws BadRequestException;
-    AutorRs guardarAutorNuevo(AutorRq autor) throws BadRequestException;
-    AutorRs actualizarAutor(Autor autor) throws BadRequestException;
     
-    List<Autor> obtenerListadoAutoresPorNacionalidad(String nacionalidad) throws BadRequestException;
+    
+    List<Autor> obtenerListadoAutores();
+   
+    List<Nacionalidad> obtenerNacionalidadesDesdeAutores() throws BadRequestException;
+    
+    
+    List<Autor> obtenerListadoAutoresPorNacionalidadId(String nacionalidadId)
+            throws BadRequestException;
+    
+    List<Autor> listarAutoresPorNacionalidad(Integer nacionalidadId);
+    
     
     Autor obtenerAutorPorId(Integer autorId) throws BadRequestException;
+    
+    /**
+     * 
+     * @param autor
+     * @return
+     * @throws BadRequestException 
+     */
+    AutorRs guardarAutorNuevo(AutorRq autor) throws BadRequestException;
+    
+    /**
+     * 
+     * @param autor
+     * @return
+     * @throws BadRequestException 
+     */
+    AutorRs actualizarAutor(AutorRq autor) throws BadRequestException;
+  
 }

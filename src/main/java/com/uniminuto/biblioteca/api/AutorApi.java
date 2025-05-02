@@ -1,6 +1,7 @@
 package com.uniminuto.biblioteca.api;
 
 import com.uniminuto.biblioteca.entity.Autor;
+import com.uniminuto.biblioteca.entity.Nacionalidad;
 import com.uniminuto.biblioteca.model.AutorRq;
 import com.uniminuto.biblioteca.model.AutorRs;
 import java.util.List;
@@ -14,16 +15,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
- * @author kaleth
+ * @author lmora
  */
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
+@CrossOrigin(origins = "*")
 @RequestMapping("/autor")
 public interface AutorApi {
+    
     /**
-     * Método para listar los autores registrados en la base de datos.
+     * Metodo para listar los autores registrados en bd.
      *
      * @return Lista de autores.
-     * @throws BadRequestException excepción.
+     * @throws BadRequestException excepcion.
      */
     @RequestMapping(value = "/listar",
             produces = {"application/json"},
@@ -31,68 +33,35 @@ public interface AutorApi {
             method = RequestMethod.GET)
     ResponseEntity<List<Autor>> listarAutores()
             throws BadRequestException;
-
+   
     /**
-     * Método para buscar un autor por nombre.
-     *
-     * @param nombre nombre del autor.
-     * @return Autor encontrado.
-     * @throws BadRequestException excepción.
-     */
-    @RequestMapping(value = "/buscar-por-nombre",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.GET)
-    ResponseEntity<Autor> buscarAutorPorNombre(
-            @RequestParam String nombre)
+    * Método para listar las nacionalidades desde los autores.
+    *
+    * @return Lista de nacionalidades.
+    * @throws BadRequestException excepción en caso de error.
+    */
+    @RequestMapping(
+       value = "/listarnacionalidad",
+       method = RequestMethod.GET,
+       produces = { "application/json" }
+    )
+    ResponseEntity<List<Nacionalidad>> listarNacionalidad() 
+            throws BadRequestException;
+    
+    
+    @RequestMapping(
+    value = "/listar-por-nacionalidad",
+    method = RequestMethod.GET,
+    produces = {"application/json"}
+    )
+    ResponseEntity<List<Autor>> listarAutoresPorNacionalidad(@RequestParam Integer nacionalidadId)
             throws BadRequestException;
 
-    /**
-     * Guarda un nuevo autor.
-     * 
-     * @param autor autor a guardar.
-     * @return respuesta del servicio.
-     * @throws BadRequestException excepción.
-     */
-    @RequestMapping(value = "/guardar-autor",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.POST)
-    ResponseEntity<AutorRs> guardarAutor(@RequestBody AutorRq autor)
-            throws BadRequestException;
-
-    /**
-     * Actualiza un autor existente.
-     * 
-     * @param autor autor a actualizar.
-     * @return respuesta del servicio.
-     * @throws BadRequestException excepción.
-     */
-    @RequestMapping(value = "/actualizar-autor",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.POST)
-    ResponseEntity<AutorRs> actualizarAutor(@RequestBody Autor autor)
-            throws BadRequestException;
     
      /**
      * Metodo para listar los autores registrados en bd.
      *
-     * @param nacionalidad nacionalidad del autor.
-     * @return Lista de autores.
-     * @throws BadRequestException excepcion.
-     */
-    @RequestMapping(value = "/listar-nacionalidad",
-            produces = {"application/json"},
-            consumes = {"application/json"},
-            method = RequestMethod.GET)
-    ResponseEntity<List<Autor>> listarAutoresByNacionalidad(
-     @RequestParam String nacionalidad)
-            throws BadRequestException;
-    
-     /**
-     * Metodo para listar los autores registrados en bd.
-     *
+     * @param autorId
      * @return Lista de autores.
      * @throws BadRequestException excepcion.
      */
@@ -103,4 +72,32 @@ public interface AutorApi {
     ResponseEntity<Autor> listarAutorPorId(@RequestParam Integer autorId)
             throws BadRequestException;
     
+    /**
+    * Guarda un autor nuevo.
+    * @param autor autor a guardar.
+    * @return respuesta del servicio.
+    * @throws BadRequestException excepción en caso de error.
+    */
+   @RequestMapping(value = "/guardar-autor",
+           produces = {"application/json"},
+           consumes = {"application/json"},
+           method = RequestMethod.POST)
+   ResponseEntity<AutorRs> guardarAutor(@RequestBody AutorRq autor)
+           throws BadRequestException;
+   
+   
+
+   /**
+    * Actualiza un autor.
+    * @param autor autor a actualizar.
+    * @return respuesta del servicio.
+    * @throws BadRequestException excepción en caso de error.
+    */
+   @RequestMapping(value = "/actualizar-autor",
+           produces = {"application/json"},
+           consumes = {"application/json"},
+           method = RequestMethod.POST)
+   ResponseEntity<AutorRs> actualizarAutor(@RequestBody AutorRq autor)
+           throws BadRequestException;
+
 }
