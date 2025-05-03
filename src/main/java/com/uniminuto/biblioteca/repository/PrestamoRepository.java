@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package com.uniminuto.biblioteca.repository;
 
 import com.uniminuto.biblioteca.entity.Prestamo;
@@ -27,4 +28,18 @@ public interface PrestamoRepository extends JpaRepository<Prestamo, Integer> {
     
     // Contar préstamos activos de un usuario
     long countByUsuarioIdUsuarioAndEstado(Integer idUsuario, EstadoPrestamo estado);
+=======
+
+package com.uniminuto.biblioteca.repository;
+
+import com.uniminuto.biblioteca.entity.Prestamo;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+/**
+ * Repositorio que permite realizar operaciones CRUD sobre la entidad {@link Prestamo}.
+ */
+@Repository
+public interface PrestamoRepository extends JpaRepository<Prestamo, Integer> {
+>>>>>>> 708e27d9b1709601d41210363af62176929a3745
 }
