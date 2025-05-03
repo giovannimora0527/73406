@@ -14,8 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- *
- * @author lmora
+ * Implementación del servicio de usuarios.
+ * Esta clase contiene la lógica de negocio relacionada con los usuarios,
+ * incluyendo la obtención de usuarios por correo electrónico y la validación
+ * del formato del correo electrónico.
+ * 
+ * @author MichaelConde
  */
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -25,14 +29,10 @@ public class UsuarioServiceImpl implements UsuarioService {
      */
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
-    /**
-     * Regex para validacion de email.
-     */
+    
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
-    /**
-     * Repositorio de usuario.
-     */
+   
     @Autowired
     private UsuarioRepository usuarioRepository;
 
