@@ -67,7 +67,7 @@ public class PrestamoServiceImpl implements PrestamoService {
      * Registra un nuevo préstamo en el sistema.
      *
      * @param prestamoRq datos de la solicitud de préstamo
-     * @return respuesta indicando el resultado de la operación
+     * @return respuesta indicando el resultado o error de la operación
      * @throws BadRequestException si el usuario o el libro no existen, o si las
      * fechas no son válidas
      */
