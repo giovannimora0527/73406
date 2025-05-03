@@ -1,16 +1,4 @@
-/**
- * Servicio para gestionar las operaciones relacionadas con los préstamos de libros.
- * 
- * <p>Esta interfaz define los métodos necesarios para listar, crear y actualizar préstamos en el sistema
- * de biblioteca. Las implementaciones de esta interfaz deben proporcionar la lógica necesaria para
- * interactuar con la base de datos y manejar las reglas de negocio relacionadas con los préstamos.</p>
- * 
- * <p>El servicio incluye operaciones para listar todos los préstamos, guardar un nuevo préstamo
- * y actualizar un préstamo existente.</p>
- * 
- * @author kaleth
- * @version 1.0
- */
+
 package com.uniminuto.biblioteca.services;
 
 import com.uniminuto.biblioteca.entity.Prestamo;
