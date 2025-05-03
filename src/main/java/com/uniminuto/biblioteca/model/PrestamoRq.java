@@ -7,7 +7,7 @@
  * 
  * <p>Usada como objeto de transferencia de datos (DTO) entre el cliente y el servidor.</p>
  * 
- * @author Santiago
+ * @author kaleth
  * @version 1.0
  */
 package com.uniminuto.biblioteca.model;

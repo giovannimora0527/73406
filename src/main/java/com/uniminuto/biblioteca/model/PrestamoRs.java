@@ -6,7 +6,7 @@
  * 
  * <p>Es utilizada para enviar información al usuario sobre el resultado de la operación.</p>
  * 
- * @author Santiago
+ * @author kaleth
  * @version 1.0
  */
 package com.uniminuto.biblioteca.model;

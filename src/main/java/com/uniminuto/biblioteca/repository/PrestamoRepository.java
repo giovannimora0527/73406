@@ -8,7 +8,7 @@
  * <p>El repositorio está diseñado para trabajar con la entidad {@link Prestamo} y su identificador
  * de tipo {@link Integer}.</p>
  * 
- * @author Santiago
+ * @author kaleth
  * @version 1.0
  */
 package com.uniminuto.biblioteca.repository;

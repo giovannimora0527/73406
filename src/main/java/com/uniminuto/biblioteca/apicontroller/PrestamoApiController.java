@@ -6,7 +6,7 @@
  * 
  * <p>Utiliza el servicio {@link PrestamoService} para realizar las acciones correspondientes en el backend.</p>
  * 
- * @author Santiago
+ * @author kaleth
  * @version 1.0
  */
 package com.uniminuto.biblioteca.apicontroller;

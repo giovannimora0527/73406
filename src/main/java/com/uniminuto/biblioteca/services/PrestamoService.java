@@ -8,7 +8,7 @@
  * <p>El servicio incluye operaciones para listar todos los préstamos, guardar un nuevo préstamo
  * y actualizar un préstamo existente.</p>
  * 
- * @author Santiago
+ * @author kaleth
  * @version 1.0
  */
 package com.uniminuto.biblioteca.services;
