@@ -1,17 +1,20 @@
 /**
  * Implementación del servicio de gestión de préstamos de libros.
- * 
- * <p>Esta clase proporciona la lógica para listar, crear y actualizar préstamos
- * de libros en el sistema de biblioteca. Se asegura de validar los datos antes de
- * realizar cualquier operación y maneja las reglas de negocio correspondientes.</p>
- * 
- * <p>Las operaciones que ofrece incluyen:</p>
+ *
+ * <p>
+ * Esta clase proporciona la lógica para listar, crear y actualizar préstamos de
+ * libros en el sistema de biblioteca. Se asegura de validar los datos antes de
+ * realizar cualquier operación y maneja las reglas de negocio
+ * correspondientes.</p>
+ *
+ * <p>
+ * Las operaciones que ofrece incluyen:</p>
  * <ul>
- *   <li>Listar todos los préstamos</li>
- *   <li>Guardar un nuevo préstamo</li>
- *   <li>Actualizar el estado de un préstamo existente</li>
+ * <li>Listar todos los préstamos</li>
+ * <li>Guardar un nuevo préstamo</li>
+ * <li>Actualizar el estado de un préstamo existente</li>
  * </ul>
- * 
+ *
  * @author Santiago
  * @version 1.0
  */
@@ -65,7 +68,8 @@ public class PrestamoServiceImpl implements PrestamoService {
      *
      * @param prestamoRq datos de la solicitud de préstamo
      * @return respuesta indicando el resultado de la operación
-     * @throws BadRequestException si el usuario o el libro no existen, o si las fechas no son válidas
+     * @throws BadRequestException si el usuario o el libro no existen, o si las
+     * fechas no son válidas
      */
     @Override
     public PrestamoRs guardarPrestamoNuevo(PrestamoRq prestamoRq) throws BadRequestException {
@@ -75,15 +79,26 @@ public class PrestamoServiceImpl implements PrestamoService {
         Libro libro = libroRepository.findById(prestamoRq.getIdLibro())
                 .orElseThrow(() -> new BadRequestException("Libro no encontrado"));
 
+        boolean disponible = libroRepository.findLibrosDisponibles().stream()
+                .anyMatch(libroDisponible
+                        -> prestamoRq.getIdLibro().intValue() == libroDisponible.getIdLibro()
+                );
+
+        if (!disponible) {
+            throw new BadRequestException("El libro no tiene ejemplares disponibles para préstamo");
+        }
+
+        LocalDate fechaPrestamo = LocalDate.now();
+
         if (prestamoRq.getFechaDevolucion() != null
-                && !prestamoRq.getFechaDevolucion().isAfter(prestamoRq.getFechaPrestamo())) {
-            throw new BadRequestException("La fecha de devolución debe ser posterior a la fecha de préstamo");
+                && !prestamoRq.getFechaDevolucion().isAfter(fechaPrestamo)) {
+            throw new BadRequestException("La fecha de devolución debe ser al menos 24 horas después de la fecha de préstamo");
         }
 
         Prestamo prestamo = new Prestamo();
         prestamo.setUsuario(usuario);
         prestamo.setLibro(libro);
-        prestamo.setFechaPrestamo(prestamoRq.getFechaPrestamo());
+        prestamo.setFechaPrestamo(fechaPrestamo);
         prestamo.setFechaDevolucion(prestamoRq.getFechaDevolucion());
         prestamo.setEstado(Prestamo.EstadoPrestamo.PRESTADO);
 
@@ -96,12 +111,13 @@ public class PrestamoServiceImpl implements PrestamoService {
     }
 
     /**
-     * Actualiza la información de un préstamo existente, incluyendo su fecha de entrega
-     * y estado final.
+     * Actualiza la información de un préstamo existente, incluyendo su fecha de
+     * entrega y estado final.
      *
      * @param prestamo entidad de préstamo con los datos actualizados
      * @return respuesta indicando el resultado de la operación
-     * @throws BadRequestException si el préstamo no existe o si las fechas no son válidas
+     * @throws BadRequestException si el préstamo no existe o si las fechas no
+     * son válidas
      */
     @Override
     public PrestamoRs actualizarPrestamo(Prestamo prestamo) throws BadRequestException {

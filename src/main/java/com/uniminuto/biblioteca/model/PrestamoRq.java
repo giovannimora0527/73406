@@ -31,10 +31,6 @@ public class PrestamoRq {
      */
     private Integer idLibro;
 
-    /**
-     * Fecha en que se realiza el préstamo.
-     */
-    private LocalDate fechaPrestamo;
 
     /**
      * Fecha esperada para la devolución del libro.
