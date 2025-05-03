@@ -36,4 +36,14 @@ public interface LibroRepository extends
      */
     List<Libro> findByAnioPublicacionBetween(Integer anioIni, Integer anioFin);
     
+    
+    /**
+     * Encuentra libros con existencias mayores que cero
+     * @param existencias Número mínimo de existencias
+     * @return Lista de libros con existencias disponibles
+     */
+    List<Libro> findByExistenciasGreaterThan(int existencias);
+    
+    
+    
 }

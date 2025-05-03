@@ -4,7 +4,6 @@ import com.uniminuto.biblioteca.entity.Autor;
 import com.uniminuto.biblioteca.entity.Nacionalidad;
 import com.uniminuto.biblioteca.model.AutorRq;
 import com.uniminuto.biblioteca.model.AutorRs;
-import com.uniminuto.biblioteca.model.UsuarioRq;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
@@ -98,7 +97,7 @@ public interface AutorApi {
            produces = {"application/json"},
            consumes = {"application/json"},
            method = RequestMethod.POST)
-   ResponseEntity<AutorRs> actualizarAutor(@RequestBody Autor autor)
+   ResponseEntity<AutorRs> actualizarAutor(@RequestBody AutorRq autor)
            throws BadRequestException;
 
 }

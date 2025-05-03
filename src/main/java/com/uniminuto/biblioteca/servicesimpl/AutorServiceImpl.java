@@ -82,7 +82,7 @@ public class AutorServiceImpl implements AutorService {
     }
 
     @Override
-    public AutorRs actualizarAutor(Autor autor) throws BadRequestException {
+    public AutorRs actualizarAutor(AutorRq autor) throws BadRequestException {
         Optional<Autor> optAutor = this.autorRepository.findById(autor.getAutorId());
 
         if (!optAutor.isPresent()) {
@@ -103,9 +103,12 @@ public class AutorServiceImpl implements AutorService {
                     + ", ya existe en la base de datos. Verifique e intente de nuevo.");
         }
 
+        Nacionalidad nacionalidad = nacionalidadRepository.findById(autor.getNacionalidadId())
+                .orElseThrow(() -> new BadRequestException("Nacionalidad no encontrada"));
+
         autorActual.setNombre(autor.getNombre());
         autorActual.setFechaNacimiento(autor.getFechaNacimiento());
-        autorActual.setNacionalidad(autor.getNacionalidad()); // <-- Asegúrate de que venga cargado
+        autorActual.setNacionalidad(nacionalidad);
 
         this.autorRepository.save(autorActual);
 
@@ -114,9 +117,9 @@ public class AutorServiceImpl implements AutorService {
         return rta;
     }
 
-    private boolean cambioObjeto(Autor actual, Autor nuevo) {
-        return !actual.getNombre().equals(nuevo.getNombre())
-                || !actual.getFechaNacimiento().equals(nuevo.getFechaNacimiento())
-                || !actual.getNacionalidad().getNacionalidadId().equals(nuevo.getNacionalidad().getNacionalidadId());
-    }
+    private boolean cambioObjeto(Autor actual, AutorRq nuevo) {
+    return !actual.getNombre().equals(nuevo.getNombre())
+            || !actual.getFechaNacimiento().equals(nuevo.getFechaNacimiento())
+            || !actual.getNacionalidad().getNacionalidadId().equals(nuevo.getNacionalidadId());
+}
 }
