@@ -1,28 +1,26 @@
+/**
+ * Representa la respuesta de una operación de préstamo en el sistema de biblioteca.
+ * 
+ * <p>Esta clase contiene el mensaje que se devuelve como respuesta después de
+ * realizar una acción relacionada con un préstamo, como crear o actualizar un préstamo.</p>
+ * 
+ * <p>Es utilizada para enviar información al usuario sobre el resultado de la operación.</p>
+ * 
+ * @author Santiago
+ * @version 1.0
+ */
 package com.uniminuto.biblioteca.model;
 
 import lombok.Data;
-import java.time.LocalDate;
 
+/**
+ * Clase que contiene el mensaje de respuesta para las operaciones de préstamo.
+ */
 @Data
 public class PrestamoRs {
-    private Integer idPrestamo;
-    private UsuarioSimple usuario;
-    private LibroSimple libro;
-    private LocalDate fechaPrestamo;
-    private LocalDate fechaDevolucion;
-    private LocalDate fechaEntrega;
-    private String estado;
+
+    /**
+     * Mensaje que indica el resultado de la operación.
+     */
     private String message;
-
-    @Data
-    public static class UsuarioSimple {
-        private Integer idUsuario;
-        private String nombre;
-    }
-
-    @Data
-    public static class LibroSimple {
-        private Integer idLibro;
-        private String titulo;
-    }
 }
