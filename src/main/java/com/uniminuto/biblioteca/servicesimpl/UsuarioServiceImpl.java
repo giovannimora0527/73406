@@ -14,8 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- *
- * @author lmora
+ * Implementación del servicio de usuarios.
+ * Esta clase contiene la lógica de negocio relacionada con los usuarios,
+ * incluyendo la obtención de usuarios por correo electrónico y la validación
+ * del formato del correo electrónico.
+ * 
+ * @author Sofía Pedraza
  */
 @Service
 public class UsuarioServiceImpl implements UsuarioService {

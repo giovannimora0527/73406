@@ -1,4 +1,3 @@
-
 package com.uniminuto.biblioteca.entity;
 
 import java.io.Serializable;
@@ -13,8 +12,11 @@ import javax.persistence.Table;
 import lombok.Data;
 
 /**
- *
- * @author lmora
+ * Clase que representa un Libro en el sistema.
+ * Esta clase mapea los datos de la tabla "libros" en la base de datos
+ * y contiene información relevante sobre el libro, como su título, autor, año de publicación, categoría y existencias.
+ * 
+ * @author Sofía Pedraza
  */
 @Data
 @Entity

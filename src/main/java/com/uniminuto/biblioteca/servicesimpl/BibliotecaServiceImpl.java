@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 /**
  *
- * @author lmora
+ * @author Sofía Pedraza
  */
 @Service
 public class BibliotecaServiceImpl implements BibliotecaService {

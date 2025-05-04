@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ */
 package com.uniminuto.biblioteca.services;
 
 import com.uniminuto.biblioteca.entity.Usuario;
@@ -7,8 +11,12 @@ import java.util.List;
 import org.apache.coyote.BadRequestException;
 
 /**
- *
- * @author lmora
+ * Interfaz de servicio para la entidad Usuario.
+ * Esta interfaz define los métodos que deben ser implementados por cualquier clase
+ * que gestione las operaciones relacionadas con los usuarios en el sistema,
+ * como la obtención de usuarios por correo y la lista completa de usuarios.
+ * 
+ * @author Sofía Pedraza
  */
 public interface UsuarioService {
     

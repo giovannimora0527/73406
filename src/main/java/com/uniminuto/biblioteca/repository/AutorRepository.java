@@ -9,33 +9,22 @@ import org.springframework.stereotype.Repository;
 
 /**
  *
- * @author lmora
+ * @author Sofía Pedraza
  */
 @Repository
 public interface AutorRepository extends
-        JpaRepository<Autor, Integer>  {
+        JpaRepository<Autor, Integer> {
+
     List<Autor> findByFechaNacimientoBetween(LocalDate fechaNacimientoInicial,
             LocalDate fechaNacimientoFin);
-    
+
     List<Autor> findByNacionalidad(String nacionalidad);
-    
+
     List<Autor> findAllByOrderByFechaNacimientoAsc();
-    
+
     List<Autor> findAllByOrderByFechaNacimientoDesc();
-    
-    /**
-     * Busca un autor por nombre.
-     *
-     * @param nombre nombre del autor.
-     * @return autor que cumpla con el criterio.
-     */
+
     Optional<Autor> findByNombre(String nombre);
 
-    /**
-     * Verifica si existe un autor por nombre.
-     *
-     * @param nombre nombre del autor.
-     * @return true si existe.
-     */
     boolean existsByNombre(String nombre);
 }

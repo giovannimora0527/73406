@@ -4,14 +4,13 @@
  */
 package com.uniminuto.biblioteca.model;
 
-/**
- *s
- * @author Sofia Pedraza
- */
-public class AutorRs {
+import lombok.Data;
 
-    public void setMessage(String se_ha_guardado_el_autor_con_éxito) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
+/**
+ *
+ * @author Sofía Pedraza
+ */
+@Data
+public class AutorRs {
+    private String message;
 }

@@ -1,38 +1,19 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.uniminuto.biblioteca.model;
 
 import java.time.LocalDate;
+import lombok.Data;
 
+/**
+ *
+ * @author Sofía Pedraza
+ */
+@Data
 public class AutorRq {
     private String nombre;
     private String nacionalidad;
     private LocalDate fechaNacimiento;
-
-    // Constructor vacío
-    public AutorRq() {}
-
-    // Getters
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getNacionalidad() {
-        return nacionalidad;
-    }
-
-    public LocalDate getFechaNacimiento() {
-        return fechaNacimiento;
-    }
-
-    // Setters
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setNacionalidad(String nacionalidad) {
-        this.nacionalidad = nacionalidad;
-    }
-
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }
 }
