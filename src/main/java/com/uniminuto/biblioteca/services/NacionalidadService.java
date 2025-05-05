@@ -10,7 +10,7 @@ import org.apache.coyote.BadRequestException;
 
 /**
  *
- * @author fx506
+ * @author yeisonl
  */
 public interface NacionalidadService {
         List<Nacionalidad> listarNacionalidad() throws BadRequestException;

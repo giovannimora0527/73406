@@ -68,79 +68,83 @@ public class PrestamoServiceImpl implements PrestamoService {
     }
 
     @Override
-public PrestamoRs guardarPrestamo(PrestamoRq prestamoRq) throws BadRequestException {
-    Usuario usuario = usuarioRepository.findById(prestamoRq.getIdUsuario())
-            .orElseThrow(() -> new BadRequestException("Usuario no encontrado"));
-
-    Libro libro = libroRepository.findById(prestamoRq.getIdLibro())
-            .orElseThrow(() -> new BadRequestException("Libro no encontrado"));
-
-    long prestamosActivos = prestamoRepository.countByLibroIdLibroAndEstado(prestamoRq.getIdLibro(), EstadoPrestamo.PRESTADO);
-    if (prestamosActivos >= libro.getExistencias()) {
-        throw new BadRequestException("No hay ejemplares disponibles para este libro");
-    }
-
-    if (prestamoRepository.countByUsuarioIdUsuarioAndEstado(prestamoRq.getIdUsuario(), EstadoPrestamo.PRESTADO) >= 3) {
-        throw new BadRequestException("El usuario ya tiene el máximo de 3 préstamos activos");
-    }
-
-    Prestamo prestamo = new Prestamo();
-    prestamo.setUsuario(usuario);
-    prestamo.setLibro(libro);
-    prestamo.setFechaPrestamo(LocalDateTime.now());
-    prestamo.setFechaDevolucion(prestamoRq.getFechaDevolucion());
-    prestamo.setEstado(EstadoPrestamo.PRESTADO); // Fijo y no modificable al crear
-
-    prestamoRepository.save(prestamo);
-
-    PrestamoRs response = new PrestamoRs();
-    response.setMessage("Préstamo registrado con éxito");
-    return response;
-}
-
-
-
-    @Override
-public PrestamoRs actualizarPrestamo(PrestamoRq prestamoRq) throws BadRequestException {
-    Prestamo prestamo = prestamoRepository.findById(prestamoRq.getIdPrestamo())
-            .orElseThrow(() -> new BadRequestException("Préstamo no encontrado"));
-
-    if (prestamoRq.getIdUsuario() != null) {
+    public PrestamoRs guardarPrestamo(PrestamoRq prestamoRq) throws BadRequestException {
         Usuario usuario = usuarioRepository.findById(prestamoRq.getIdUsuario())
                 .orElseThrow(() -> new BadRequestException("Usuario no encontrado"));
-        prestamo.setUsuario(usuario);
-    }
 
-    if (prestamoRq.getIdLibro() != null) {
         Libro libro = libroRepository.findById(prestamoRq.getIdLibro())
                 .orElseThrow(() -> new BadRequestException("Libro no encontrado"));
-        prestamo.setLibro(libro);
-    }
 
-    if (prestamoRq.getFechaDevolucion() != null) {
-        prestamo.setFechaDevolucion(prestamoRq.getFechaDevolucion());
-    }
-
-    if (prestamoRq.getFechaEntrega() != null) {
-        prestamo.setFechaEntrega(prestamoRq.getFechaEntrega());
-
-        // ✅ Verificar si se entregó después de la fecha de devolución
-        if (prestamoRq.getFechaEntrega().isAfter(prestamo.getFechaDevolucion())) {
-            prestamo.setEstado(EstadoPrestamo.VENCIDO);
-        } else {
-            prestamo.setEstado(EstadoPrestamo.DEVUELTO); // Opcional si quieres marcarlo como devuelto en caso contrario
+        long prestamosActivos = prestamoRepository.countByLibroIdLibroAndEstado(prestamoRq.getIdLibro(), EstadoPrestamo.PRESTADO);
+        if (prestamosActivos >= libro.getExistencias()) {
+            throw new BadRequestException("No hay ejemplares disponibles para este libro");
         }
+
+        if (prestamoRepository.countByUsuarioIdUsuarioAndEstado(prestamoRq.getIdUsuario(), EstadoPrestamo.PRESTADO) >= 3) {
+            throw new BadRequestException("El usuario ya tiene el máximo de 3 préstamos activos");
+        }
+
+        // Validación de fecha de devolución: mínimo 24 horas después de ahora
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime fechaDevolucion = prestamoRq.getFechaDevolucion().atStartOfDay(); // Convierte LocalDate a LocalDateTime a las 00:00 horas
+
+// Verifica que la fecha de devolución sea al menos 24 horas después de la fecha actual
+        if (prestamoRq.getFechaDevolucion() == null || !fechaDevolucion.isAfter(ahora.plusHours(24))) {
+            throw new BadRequestException("La fecha de devolución debe ser al menos 24 horas después de la fecha actual");
+        }
+
+        Prestamo prestamo = new Prestamo();
+        prestamo.setUsuario(usuario);
+        prestamo.setLibro(libro);
+        prestamo.setFechaPrestamo(ahora);
+        prestamo.setFechaDevolucion(prestamoRq.getFechaDevolucion());
+        prestamo.setEstado(EstadoPrestamo.PRESTADO); // Fijo y no modificable al crear
+
+        prestamoRepository.save(prestamo);
+
+        PrestamoRs response = new PrestamoRs();
+        response.setMessage("Préstamo registrado con éxito");
+        return response;
     }
 
-    prestamoRepository.save(prestamo);
+    @Override
+    public PrestamoRs actualizarPrestamo(PrestamoRq prestamoRq) throws BadRequestException {
+        Prestamo prestamo = prestamoRepository.findById(prestamoRq.getIdPrestamo())
+                .orElseThrow(() -> new BadRequestException("Préstamo no encontrado"));
 
-    PrestamoRs response = new PrestamoRs();
-    response.setMessage("Préstamo actualizado con éxito");
-    return response;
-}
+        if (prestamoRq.getIdUsuario() != null) {
+            Usuario usuario = usuarioRepository.findById(prestamoRq.getIdUsuario())
+                    .orElseThrow(() -> new BadRequestException("Usuario no encontrado"));
+            prestamo.setUsuario(usuario);
+        }
 
+        if (prestamoRq.getIdLibro() != null) {
+            Libro libro = libroRepository.findById(prestamoRq.getIdLibro())
+                    .orElseThrow(() -> new BadRequestException("Libro no encontrado"));
+            prestamo.setLibro(libro);
+        }
 
+        if (prestamoRq.getFechaDevolucion() != null) {
+            prestamo.setFechaDevolucion(prestamoRq.getFechaDevolucion());
+        }
 
+        if (prestamoRq.getFechaEntrega() != null) {
+            prestamo.setFechaEntrega(prestamoRq.getFechaEntrega());
+
+            // Verificar si se entregó después de la fecha de devolución
+            if (prestamoRq.getFechaEntrega().isAfter(prestamo.getFechaDevolucion())) {
+                prestamo.setEstado(EstadoPrestamo.VENCIDO);
+            } else {
+                prestamo.setEstado(EstadoPrestamo.DEVUELTO); // Opcional si quieres marcarlo como devuelto en caso contrario
+            }
+        }
+
+        prestamoRepository.save(prestamo);
+
+        PrestamoRs response = new PrestamoRs();
+        response.setMessage("Préstamo actualizado con éxito");
+        return response;
+    }
 
     @Override
     public PrestamoRs registrarDevolucion(Integer idPrestamo) throws BadRequestException {
