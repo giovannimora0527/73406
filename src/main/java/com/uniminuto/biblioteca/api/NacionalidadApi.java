@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  *
- * @author fx506
+ * @author yeisonl
  */
 @CrossOrigin(origins = "*")
 @RequestMapping("/nacionalidad")

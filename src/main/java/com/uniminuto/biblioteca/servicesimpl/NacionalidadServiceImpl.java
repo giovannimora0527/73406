@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 /**
  *
- * @author fx506
+ * @author yeisonl
  */
 @Service
 public class NacionalidadServiceImpl implements NacionalidadService {

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author fx506
+ * @author yeisonl
  */
 @RestController
 public class NacionalidadApiController implements NacionalidadApi {
