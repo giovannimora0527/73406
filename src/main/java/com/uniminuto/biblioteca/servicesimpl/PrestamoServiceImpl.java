@@ -1,3 +1,23 @@
+/**
+ * Implementación del servicio de gestión de préstamos de libros.
+ *
+ * <p>
+ * Esta clase proporciona la lógica para listar, crear y actualizar préstamos de
+ * libros en el sistema de biblioteca. Se asegura de validar los datos antes de
+ * realizar cualquier operación y maneja las reglas de negocio
+ * correspondientes.</p>
+ *
+ * <p>
+ * Las operaciones que ofrece incluyen:</p>
+ * <ul>
+ * <li>Listar todos los préstamos</li>
+ * <li>Guardar un nuevo préstamo</li>
+ * <li>Actualizar el estado de un préstamo existente</li>
+ * </ul>
+ *
+ * @author kaleth
+ * @version 1.0
+ */
 package com.uniminuto.biblioteca.servicesimpl;
 
 import com.uniminuto.biblioteca.entity.Prestamo;
@@ -14,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +52,25 @@ public class PrestamoServiceImpl implements PrestamoService {
     @Autowired
     private PrestamoRepository prestamoRepository;
 
+    /**
+     * Lista todos los préstamos registrados en la base de datos.
+     *
+     * @return lista de préstamos
+     * @throws BadRequestException si ocurre un error durante la consulta
+     */
     @Override
     public List<Prestamo> listarTodos() throws BadRequestException {
         return prestamoRepository.findAll();
     }
 
+    /**
+     * Registra un nuevo préstamo en el sistema.
+     *
+     * @param prestamoRq datos de la solicitud de préstamo
+     * @return respuesta indicando el resultado o error de la operación
+     * @throws BadRequestException si el usuario o el libro no existen, o si las
+     * fechas no son válidas
+     */
     @Override
     public PrestamoRs guardarPrestamoNuevo(PrestamoRq prestamoRq) throws BadRequestException {
         Usuario usuario = usuarioRepository.findById(prestamoRq.getIdUsuario())
@@ -46,32 +79,46 @@ public class PrestamoServiceImpl implements PrestamoService {
         Libro libro = libroRepository.findById(prestamoRq.getIdLibro())
                 .orElseThrow(() -> new BadRequestException("Libro no encontrado"));
 
-        // Validación de fechas: usa LocalDateTime directamente
+        boolean disponible = libroRepository.findLibrosDisponibles().stream()
+                .anyMatch(libroDisponible
+                        -> prestamoRq.getIdLibro().intValue() == libroDisponible.getIdLibro()
+                );
+
+        if (!disponible) {
+            throw new BadRequestException("El libro no tiene ejemplares disponibles para préstamo");
+        }
+
+        LocalDate fechaPrestamo = LocalDate.now();
+
         if (prestamoRq.getFechaDevolucion() != null
-                && !prestamoRq.getFechaDevolucion().isAfter(prestamoRq.getFechaPrestamo())) {
-            throw new BadRequestException("La fecha de devolución debe ser posterior a la fecha de préstamo");
+                && !prestamoRq.getFechaDevolucion().isAfter(fechaPrestamo)) {
+            throw new BadRequestException("La fecha de devolución debe ser al menos 24 horas después de la fecha de préstamo");
         }
 
         Prestamo prestamo = new Prestamo();
         prestamo.setUsuario(usuario);
         prestamo.setLibro(libro);
-
-        // fechaPrestamo es LocalDateTime en la entidad: asignamos directamente
-        prestamo.setFechaPrestamo(prestamoRq.getFechaPrestamo());
-
-        // fechaDevolucion es LocalDate en la entidad: convertimos
-        if (prestamoRq.getFechaDevolucion() != null) {
-            prestamo.setFechaDevolucion(prestamoRq.getFechaDevolucion().toLocalDate());
-        }
-
+        prestamo.setFechaPrestamo(fechaPrestamo);
+        prestamo.setFechaDevolucion(prestamoRq.getFechaDevolucion());
         prestamo.setEstado(Prestamo.EstadoPrestamo.PRESTADO);
+
         prestamoRepository.save(prestamo);
 
         PrestamoRs response = new PrestamoRs();
         response.setMessage("Préstamo guardado correctamente");
+
         return response;
     }
 
+    /**
+     * Actualiza la información de un préstamo existente, incluyendo su fecha de
+     * entrega y estado final.
+     *
+     * @param prestamo entidad de préstamo con los datos actualizados
+     * @return respuesta indicando el resultado de la operación
+     * @throws BadRequestException si el préstamo no existe o si las fechas no
+     * son válidas
+     */
     @Override
     public PrestamoRs actualizarPrestamo(Prestamo prestamo) throws BadRequestException {
         Optional<Prestamo> prestamoExistenteOpt = prestamoRepository.findById(prestamo.getIdPrestamo());
@@ -81,23 +128,19 @@ public class PrestamoServiceImpl implements PrestamoService {
 
         Prestamo prestamoExistente = prestamoExistenteOpt.get();
 
+        if (prestamo.getFechaEntrega() != null
+                && prestamo.getFechaEntrega().isBefore(prestamoExistente.getFechaPrestamo())) {
+            throw new BadRequestException("La fecha de entrega no puede ser antes de la fecha de préstamo");
+        }
+
         if (prestamoExistente.getFechaDevolucion() == null) {
             throw new BadRequestException("El préstamo no tiene una fecha de devolución registrada");
         }
 
         if (prestamo.getFechaEntrega() != null) {
-            // fechaEntrega en la entidad es LocalDate
-            LocalDate entrega = prestamo.getFechaEntrega();
+            prestamoExistente.setFechaEntrega(prestamo.getFechaEntrega());
 
-            // Comparamos con fechaPrestamo (LocalDateTime) extrayendo la fecha
-            if (entrega.isBefore(prestamoExistente.getFechaPrestamo().toLocalDate())) {
-                throw new BadRequestException("La fecha de entrega no puede ser antes de la fecha de préstamo");
-            }
-
-            prestamoExistente.setFechaEntrega(entrega);
-
-            // Comparamos con fechaDevolucion (ambas LocalDate)
-            if (entrega.isAfter(prestamoExistente.getFechaDevolucion())) {
+            if (prestamo.getFechaEntrega().isAfter(prestamoExistente.getFechaDevolucion())) {
                 prestamoExistente.setEstado(Prestamo.EstadoPrestamo.VENCIDO);
             } else {
                 prestamoExistente.setEstado(Prestamo.EstadoPrestamo.DEVUELTO);
@@ -108,6 +151,7 @@ public class PrestamoServiceImpl implements PrestamoService {
 
         PrestamoRs response = new PrestamoRs();
         response.setMessage("Préstamo actualizado correctamente");
+
         return response;
     }
 }
