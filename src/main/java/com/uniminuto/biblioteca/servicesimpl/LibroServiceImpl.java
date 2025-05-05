@@ -2,20 +2,26 @@ package com.uniminuto.biblioteca.servicesimpl;
 
 import com.uniminuto.biblioteca.entity.Autor;
 import com.uniminuto.biblioteca.entity.Libro;
+import com.uniminuto.biblioteca.entity.LibroDisponibleProjection;
+import com.uniminuto.biblioteca.repository.AutorRepository;
 import com.uniminuto.biblioteca.repository.LibroRepository;
 import com.uniminuto.biblioteca.services.AutorService;
 import com.uniminuto.biblioteca.services.LibroService;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
+ * Implementación del servicio de libros. Esta clase maneja la lógica de negocio
+ * relacionada con los libros en el sistema, incluyendo la obtención de libros
+ * por autor, título y rangos de fechas de publicación.
  *
- * @author lmora
+ * @author kaleth
  */
 @Service
 public class LibroServiceImpl implements LibroService {
@@ -85,4 +91,10 @@ public class LibroServiceImpl implements LibroService {
 
         return this.libroRepository.findByAnioPublicacionBetween(fechaInicio, fechaFin);
     }
+
+    @Override
+    public List<LibroDisponibleProjection> obtenerLibrosDisponibles() throws BadRequestException {
+        return this.libroRepository.findLibrosDisponibles();
+    }
+
 }
