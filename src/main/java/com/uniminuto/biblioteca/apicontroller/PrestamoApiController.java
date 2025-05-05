@@ -1,4 +1,14 @@
-
+/**
+ * Implementación del controlador API para manejar las operaciones relacionadas con los préstamos.
+ * 
+ * <p>Esta clase es responsable de procesar las solicitudes HTTP para las operaciones de préstamo,
+ * como listar los préstamos, guardar un nuevo préstamo y actualizar un préstamo existente.</p>
+ * 
+ * <p>Utiliza el servicio {@link PrestamoService} para realizar las acciones correspondientes en el backend.</p>
+ * 
+ * @author kaleth
+ * @version 1.0
+ */
 package com.uniminuto.biblioteca.apicontroller;
 
 import com.uniminuto.biblioteca.api.PrestamoApi;
