@@ -14,7 +14,6 @@ public class PrestamoRs {
     private String estado;
     private String message;
 
-    
     @Data
     public static class UsuarioSimple {
         private Integer idUsuario;

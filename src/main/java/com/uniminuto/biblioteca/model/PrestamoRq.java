@@ -11,5 +11,4 @@ public class PrestamoRq {
     private LocalDate fechaDevolucion;
     private LocalDate fechaEntrega;
     private String estado;
-    }
-
+}
