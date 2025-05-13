@@ -27,20 +27,18 @@ public interface UsuarioService {
      */
     Usuario buscarPorCorreo(String correo) throws BadRequestException;
     
-    
     /**
-     * 
-     * @param usuario
-     * @return
-     * @throws BadRequestException 
+     * Guarda un usuario nuevo.
+     * @return Respuesta del servicio.
+     * @throws BadRequestException excepcion del servicio.
      */
-    UsuarioRs guardarUsuarioNuevo(UsuarioRq usuario) throws BadRequestException;
+    UsuarioRs guardarUsuarioNuevo(UsuarioRq usuarioNuevo) throws BadRequestException;
+    
     
     /**
-     * 
-     * @param usuario
-     * @return
-     * @throws BadRequestException 
+     * Actualiza un usuario.
+     * @return Respuesta del servicio.
+     * @throws BadRequestException excepcion del servicio.
      */
     UsuarioRs actualizarUsuario(Usuario usuario) throws BadRequestException;
     

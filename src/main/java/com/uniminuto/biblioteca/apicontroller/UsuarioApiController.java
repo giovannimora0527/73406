@@ -23,25 +23,25 @@ public class UsuarioApiController implements UsuarioApi {
      */
     @Autowired
     private UsuarioService usuarioService;
-
+    
     @Override
     public ResponseEntity<List<Usuario>> listarUsuarios() throws BadRequestException {
         return ResponseEntity.ok(this.usuarioService.listarTodo());
     }
-
+    
     @Override
     public ResponseEntity<Usuario> buscarUsuarioPorEmail(String correo) throws BadRequestException {
         return ResponseEntity.ok(this.usuarioService.buscarPorCorreo(correo));
     }
-
+    
     @Override
-    public ResponseEntity<UsuarioRs> guardarUsuario(UsuarioRq usuario) throws BadRequestException {
-        return ResponseEntity.ok(this.usuarioService.guardarUsuarioNuevo(usuario));
+    public ResponseEntity<UsuarioRs> guardarUsuario(UsuarioRq usuarioNuevo) throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioService.guardarUsuarioNuevo(usuarioNuevo));
     }
 
     @Override
-    public ResponseEntity<UsuarioRs> actualizarUsuario(Usuario usuario) throws BadRequestException {
-      return ResponseEntity.ok(this.usuarioService.actualizarUsuario(usuario));
+    public ResponseEntity<UsuarioRs> actualizarUsuario(Usuario usuarioActualizar) throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioService.actualizarUsuario(usuarioActualizar));
     }
-
+    
 }

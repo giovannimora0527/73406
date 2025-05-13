@@ -1,32 +1,28 @@
 package com.uniminuto.biblioteca.entity;
 
 import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.Data;
 
 /**
- * Entidad que representa una categoría dentro del sistema.
- * Se almacena en la tabla 'categoria'.
+ * Entidad que representa la tabla 'categoria'.
  * 
- * Cada categoría tiene un identificador único y un nombre descriptivo.
- * 
- * Tabla original en la base de datos:
- * CREATE TABLE `categoria` (
- *   `categoria_id` int(11) NOT NULL AUTO_INCREMENT,
- *   `nombre` varchar(100) NOT NULL,
- *   PRIMARY KEY (`categoria_id`)
- * )
+ * Contiene información básica de categorías disponibles en el sistema.
  */
-@Data
 @Entity
 @Table(name = "categoria")
+@Data
 public class Categoria implements Serializable {
 
+    /**
+     * Id Serializable.
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -42,5 +38,4 @@ public class Categoria implements Serializable {
      */
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
-
 }
