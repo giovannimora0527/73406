@@ -12,31 +12,18 @@ import java.util.regex.Pattern;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-/**
- * Implementación del servicio de usuarios.
- * Esta clase contiene la lógica de negocio relacionada con los usuarios,
- * incluyendo la obtención de usuarios por correo electrónico y la validación
- * del formato del correo electrónico.
- * 
- * @author Sofía Pedraza
- */
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
-    /**
-     * Patron para validar email.
-     */
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-
-    /**
-     * Regex para validacion de email.
-     */
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
-    /**
-     * Repositorio de usuario.
-     */
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -48,29 +35,19 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario buscarPorCorreo(String correo) throws BadRequestException {
         if (correo == null || correo.isBlank()) {
-            throw new BadRequestException("El correo: " + correo + ", no cumple "
-                    + "la validación para ser un correo valido.");
+            throw new BadRequestException("El correo: " + correo + ", no cumple la validación para ser un correo válido.");
         }
-
         boolean isValidoEmail = this.validarCorreo(correo);
         if (!isValidoEmail) {
-            throw new BadRequestException("El correo no es valido.");
+            throw new BadRequestException("El correo no es válido.");
         }
-
-        Optional<Usuario> optUsuario = this.usuarioRepository
-                .findByCorreo(correo);
+        Optional<Usuario> optUsuario = this.usuarioRepository.findByCorreo(correo);
         if (!optUsuario.isPresent()) {
-            throw new BadRequestException("No hay registros de usuarios "
-                    + "registrados con el correo ingresado.");
+            throw new BadRequestException("No hay registros de usuarios registrados con el correo ingresado.");
         }
         return optUsuario.get();
     }
 
-    /**
-     *
-     * @param correo
-     * @return
-     */
     public boolean validarCorreo(String correo) {
         if (correo == null || correo.isBlank()) {
             return false;
@@ -80,25 +57,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioRs guardarUsuarioNuevo(UsuarioRq usuario) throws BadRequestException {
-        Optional<Usuario> optUser = this.usuarioRepository
-                .findByNombre(usuario.getNombre());
+        Optional<Usuario> optUser = this.usuarioRepository.findByNombre(usuario.getNombre());
         if (optUser.isPresent()) {
-            throw new BadRequestException("El usuario ya existe con el nombre "
-                    + usuario.getNombre()
-                    + ", Verifique e intente de nuevo.");
+            throw new BadRequestException("El usuario ya existe con el nombre " + usuario.getNombre() + ", Verifique e intente de nuevo.");
         }
 
-        optUser = this.usuarioRepository
-                .findByCorreo(usuario.getCorreo());
-
+        optUser = this.usuarioRepository.findByCorreo(usuario.getCorreo());
         if (optUser.isPresent()) {
-            throw new BadRequestException("El usuario ya existe con el correo "
-                    + usuario.getCorreo()
-                    + ", Verifique e intente de nuevo.");
+            throw new BadRequestException("El usuario ya existe con el correo " + usuario.getCorreo() + ", Verifique e intente de nuevo.");
         }
+
         this.usuarioRepository.save(this.convertirUsuarioRqToUsuario(usuario));
         UsuarioRs rta = new UsuarioRs();
-        rta.setMessage("Se ha guardado el usuario con exito.");
+        rta.setMessage("Se ha guardado el usuario con éxito.");
         return rta;
     }
 
@@ -112,8 +83,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         return user;
     }
 
-    @Override
-    public UsuarioRs actualizarUsuario(Usuario usuario) throws BadRequestException {        
+  @Override
+    public UsuarioRs actualizarUsuario(Usuario usuario) throws BadRequestException {
         Optional<Usuario> optUser = this.usuarioRepository.findById(usuario.getIdUsuario());
         if (!optUser.isPresent()) {
             throw new BadRequestException("No existe el usuario.");
@@ -124,18 +95,15 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (!cambioObjeto(userActual, usuario)) {
             return rta;
         }
-
         if (!usuario.getNombre().equals(userActual.getNombre())) {
-           if (this.usuarioRepository.existsByNombre(usuario.getNombre())) {
-               throw new BadRequestException("El nombre del usuario: " + usuario.getNombre() 
-                       + ", existe en la bd. Verifique e intente de nuevo.");
-           }
+            if (this.usuarioRepository.existsByNombre(usuario.getNombre())) {
+                throw new BadRequestException("El nombre del usuario: " + usuario.getNombre() + ", existe en la bd. Verifique e intente de nuevo.");
+            }
         }
         if (!usuario.getCorreo().equals(userActual.getCorreo())) {
             if (this.usuarioRepository.existsByCorreo(usuario.getCorreo())) {
-               throw new BadRequestException("El correo del usuario: " + usuario.getCorreo() 
-                       + ", existe en la bd. Verifique e intente de nuevo.");
-           }
+                throw new BadRequestException("El correo del usuario: " + usuario.getCorreo() + ", existe en la bd. Verifique e intente de nuevo.");
+            }
         }
         userActual.setNombre(usuario.getNombre());
         userActual.setCorreo(usuario.getCorreo());
@@ -154,5 +122,45 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         return false;
     }
+@Override
+    public UsuarioRs cargaMasivaUsuarios(MultipartFile file) throws BadRequestException {
+        UsuarioRs respuesta = new UsuarioRs();
 
-}
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+            String linea;
+            int totalCreados = 0;
+
+            while ((linea = reader.readLine()) != null) {
+                String[] campos = linea.split(",");
+
+                if (campos.length < 3) continue; 
+
+                String nombre = campos[0].trim();
+                String correo = campos[1].trim();
+                String telefono = campos[2].trim();
+
+                if (!validarCorreo(correo)) continue;
+
+                if (usuarioRepository.existsByCorreo(correo) || usuarioRepository.existsByNombre(nombre)) {
+                    continue;
+                }
+
+                Usuario user = new Usuario();
+                user.setNombre(nombre);
+                user.setCorreo(correo);
+                user.setTelefono(telefono);
+                user.setActivo(true);
+                user.setFechaRegistro(LocalDateTime.now());
+
+                usuarioRepository.save(user);
+                totalCreados++;
+            }
+
+            respuesta.setMessage("Carga masiva completada. Usuarios creados: " + totalCreados);
+        } catch (Exception e) {
+            throw new BadRequestException("Error al procesar el archivo: " + e.getMessage());
+        }
+
+        return respuesta;
+    }
+} 

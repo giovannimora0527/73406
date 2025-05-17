@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.uniminuto.biblioteca.apicontroller;
 
 import com.uniminuto.biblioteca.api.UsuarioApi;
@@ -14,20 +10,11 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-/**
- * Controlador que implementa los métodos definidos en la interfaz UsuarioApi.
- * Proporciona los endpoints necesarios para gestionar usuarios, como listar usuarios
- * y obtener usuarios por correo electrónico.
- * 
- * @author Sofía Pedraza
- */
 @RestController
 public class UsuarioApiController implements UsuarioApi {
 
-    /**
-     * Servicio de usuarios.
-     */
     @Autowired
     private UsuarioService usuarioService;
 
@@ -48,7 +35,16 @@ public class UsuarioApiController implements UsuarioApi {
 
     @Override
     public ResponseEntity<UsuarioRs> actualizarUsuario(Usuario usuario) throws BadRequestException {
-      return ResponseEntity.ok(this.usuarioService.actualizarUsuario(usuario));
+        return ResponseEntity.ok(this.usuarioService.actualizarUsuario(usuario));
     }
 
+    // NUEVO: carga masiva CSV
+    @Override
+    public ResponseEntity<UsuarioRs> cargaMasivaUsuarios(MultipartFile file) throws BadRequestException {
+        if (file.isEmpty()) {
+            throw new BadRequestException("El archivo CSV está vacío");
+        }
+        UsuarioRs response = this.usuarioService.cargaMasivaUsuarios(file);
+        return ResponseEntity.ok(response);
+    }
 }
