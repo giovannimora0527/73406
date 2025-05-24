@@ -5,7 +5,9 @@ import com.uniminuto.biblioteca.entity.Nacionalidad;
 import com.uniminuto.biblioteca.model.AutorRq;
 import com.uniminuto.biblioteca.model.AutorRs;
 import java.util.List;
+import java.util.Map;
 import org.apache.coyote.BadRequestException;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -43,5 +45,9 @@ public interface AutorService {
      * @throws BadRequestException 
      */
     AutorRs actualizarAutor(AutorRq autor) throws BadRequestException;
+    
+    
+    // Nuevo método para carga masiva
+    Map<String, Object> cargarAutoresDesdeCSV(MultipartFile archivo) throws BadRequestException;
   
 }

@@ -6,10 +6,12 @@ import com.uniminuto.biblioteca.model.UsuarioRq;
 import com.uniminuto.biblioteca.model.UsuarioRs;
 import com.uniminuto.biblioteca.services.UsuarioService;
 import java.util.List;
+import java.util.Map;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -43,5 +45,10 @@ public class UsuarioApiController implements UsuarioApi {
     public ResponseEntity<UsuarioRs> actualizarUsuario(Usuario usuario) throws BadRequestException {
       return ResponseEntity.ok(this.usuarioService.actualizarUsuario(usuario));
     }
+    
+    @Override
+    public ResponseEntity<Map<String, Object>> cargarUsuariosDesdeCSV(MultipartFile archivo) throws BadRequestException {
+        return ResponseEntity.ok(this.usuarioService.cargarUsuariosDesdeCSV(archivo));
+        }
 
 }

@@ -4,7 +4,10 @@ import com.uniminuto.biblioteca.entity.Usuario;
 import com.uniminuto.biblioteca.model.UsuarioRq;
 import com.uniminuto.biblioteca.model.UsuarioRs;
 import java.util.List;
+import java.util.Map;
 import org.apache.coyote.BadRequestException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -43,5 +46,14 @@ public interface UsuarioService {
      * @throws BadRequestException 
      */
     UsuarioRs actualizarUsuario(Usuario usuario) throws BadRequestException;
+    
+    
+    
+    
+    
+    // Nuevo método para carga masiva
+    Map<String, Object> cargarUsuariosDesdeCSV(MultipartFile archivo) throws BadRequestException;
+    
+    
     
 }

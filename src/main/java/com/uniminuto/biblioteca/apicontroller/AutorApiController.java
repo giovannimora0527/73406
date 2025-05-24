@@ -8,10 +8,12 @@ import com.uniminuto.biblioteca.model.AutorRs;
 import com.uniminuto.biblioteca.repository.NacionalidadRepository;
 import com.uniminuto.biblioteca.services.AutorService;
 import java.util.List;
+import java.util.Map;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -58,5 +60,10 @@ public class AutorApiController implements AutorApi {
     public ResponseEntity<AutorRs> actualizarAutor(AutorRq autor) throws BadRequestException {
         return ResponseEntity.ok(this.autorService.actualizarAutor(autor));
     }
-   
+    
+    
+   @Override
+    public ResponseEntity<Map<String, Object>> cargarAutoresDesdeCSV(MultipartFile archivo) throws BadRequestException {
+        return ResponseEntity.ok(this.autorService.cargarAutoresDesdeCSV(archivo));
+        }
 }

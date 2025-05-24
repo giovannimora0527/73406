@@ -5,13 +5,17 @@ import com.uniminuto.biblioteca.entity.Nacionalidad;
 import com.uniminuto.biblioteca.model.AutorRq;
 import com.uniminuto.biblioteca.model.AutorRs;
 import java.util.List;
+import java.util.Map;
 import org.apache.coyote.BadRequestException;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
 
 /**
  *
@@ -99,6 +103,21 @@ public interface AutorApi {
            method = RequestMethod.POST)
    ResponseEntity<AutorRs> actualizarAutor(@RequestBody AutorRq autor)
            throws BadRequestException;
+   
+   /**
+     * Método para cargar usuarios desde un archivo CSV.
+     *
+     * @param archivo Archivo CSV con los datos de usuarios
+     * @return Resultado del proceso de carga
+     * @throws BadRequestException si ocurre un error durante la carga
+     */
+    @RequestMapping(value = "/cargar-csv",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<Map<String, Object>> cargarAutoresDesdeCSV(
+            @RequestParam("archivo") MultipartFile archivo)
+            throws BadRequestException;
 
 }
 

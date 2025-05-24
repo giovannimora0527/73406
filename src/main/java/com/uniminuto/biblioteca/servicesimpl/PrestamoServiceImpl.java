@@ -12,6 +12,7 @@ import com.uniminuto.biblioteca.services.PrestamoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,10 +36,14 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     /**
      * Obtiene todos los préstamos registrados
+     * Actualiza automáticamente los estados vencidos antes de retornar
      * @return Lista de objetos PrestamoRs con la información de cada préstamo
      */
     @Override
     public List<PrestamoRs> getPrestamos() {
+        // Actualizar estados vencidos antes de consultar
+        this.actualizarEstadosVencidos();
+        
         return prestamoRepository.findAll().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -46,6 +51,7 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     /**
      * Registra un nuevo préstamo en el sistema
+     * DESCUENTA las existencias del libro automáticamente
      * @param rq Objeto con la información del préstamo a crear
      * @return Objeto PrestamoRs con la información del préstamo creado
      */
@@ -67,16 +73,9 @@ public class PrestamoServiceImpl implements PrestamoService {
         Usuario usuario = usuarioOpt.get();
         Libro libro = libroOpt.get();
 
-        // Verificar la disponibilidad del libro
-        // Contar cuántos préstamos activos hay de este libro
-        long prestamosActivos = prestamoRepository.countByLibroAndEstadoIn(
-                libro, 
-                List.of(Prestamo.EstadoPrestamo.PRESTADO, Prestamo.EstadoPrestamo.VENCIDO)
-        );
-        
-        // Si el número de préstamos activos es igual o mayor a las existencias, no está disponible
-        if (prestamosActivos >= libro.getExistencias()) {
-            throw new RuntimeException("El libro no está disponible para préstamo.");
+        // CAMBIO IMPORTANTE: Verificar disponibilidad por existencias directas
+        if (libro.getExistencias() <= 0) {
+            throw new RuntimeException("El libro no tiene existencias disponibles para préstamo.");
         }
 
         // Validar que la fecha de devolución sea al menos un día después de la fecha actual
@@ -85,6 +84,10 @@ public class PrestamoServiceImpl implements PrestamoService {
             rq.getFechaDevolucion().isBefore(fechaActual.plusDays(1))) {
             throw new RuntimeException("La fecha de devolución debe ser al menos un día posterior a la fecha actual.");
         }
+
+        // CAMBIO IMPORTANTE: DESCONTAR existencias del libro
+        libro.setExistencias(libro.getExistencias() - 1);
+        libroRepository.save(libro);
 
         // Crear el nuevo préstamo
         Prestamo prestamo = new Prestamo();
@@ -100,6 +103,7 @@ public class PrestamoServiceImpl implements PrestamoService {
     /**
      * Actualiza un préstamo existente
      * Según el requerimiento, solo debe permitir actualizar la fecha de entrega
+     * DEVUELVE las existencias al libro cuando se marca como devuelto
      * @param id ID del préstamo a actualizar
      * @param rq Objeto con la información del préstamo a actualizar
      * @return Objeto PrestamoRs con la información del préstamo actualizado
@@ -116,6 +120,11 @@ public class PrestamoServiceImpl implements PrestamoService {
         
         Prestamo prestamo = prestamoOpt.get();
         
+        // Solo permitir actualizar si el préstamo está activo (PRESTADO o VENCIDO)
+        if (prestamo.getEstado() == Prestamo.EstadoPrestamo.DEVUELTO) {
+            throw new RuntimeException("No se puede modificar un préstamo que ya fue devuelto.");
+        }
+        
         // Actualizar fecha de entrega (único campo editable según requerimiento)
         if (rq.getFechaEntrega() != null) {
             // Validar que la fecha de entrega no sea anterior a la fecha de préstamo
@@ -125,14 +134,14 @@ public class PrestamoServiceImpl implements PrestamoService {
             
             prestamo.setFechaEntrega(rq.getFechaEntrega());
             
-            // Actualizar estado según la fecha de entrega
-            // Si la fecha de entrega es posterior a la fecha de devolución, estado = VENCIDO
-            // De lo contrario, estado = DEVUELTO
-            if (rq.getFechaEntrega().isAfter(prestamo.getFechaDevolucion())) {
-                prestamo.setEstado(Prestamo.EstadoPrestamo.VENCIDO);
-            } else {
-                prestamo.setEstado(Prestamo.EstadoPrestamo.DEVUELTO);
-            }
+            // CAMBIO IMPORTANTE: DEVOLVER existencias al libro cuando se marca como devuelto
+            Libro libro = prestamo.getLibro();
+            libro.setExistencias(libro.getExistencias() + 1);
+            libroRepository.save(libro);
+            
+            // CAMBIO IMPORTANTE: Cuando se registra fecha de entrega, SIEMPRE es DEVUELTO
+            // El estado VENCIDO solo aplica cuando NO se ha devuelto y pasó la fecha límite
+            prestamo.setEstado(Prestamo.EstadoPrestamo.DEVUELTO);
         }
         
         return mapToResponse(prestamoRepository.save(prestamo));
@@ -140,24 +149,50 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     /**
      * Obtiene la lista de libros disponibles para préstamo
+     * CAMBIO: Ahora se basa en existencias directas del libro
      * @return Lista de libros disponibles
      */
     @Override
     public List<Libro> getLibrosDisponibles() {
-        // Obtener todos los libros
-        List<Libro> todosLosLibros = libroRepository.findAll();
+        // Filtrar libros que tengan existencias mayores a 0
+        return libroRepository.findByExistenciasGreaterThan(0);
+    }
+
+    /**
+     * NUEVO MÉTODO: Tarea programada que se ejecuta diariamente para actualizar estados vencidos
+     * Se ejecuta todos los días a las 00:01 AM
+     */
+    @Scheduled(cron = "0 1 0 * * ?") // Ejecutar diariamente al inicio del día
+    @Transactional
+    public void actualizarEstadosVencidosScheduled() {
+        this.actualizarEstadosVencidos();
+    }
+
+    /**
+     * NUEVO MÉTODO: Actualiza automáticamente los préstamos vencidos
+     * Cambia el estado a VENCIDO si la fecha actual es posterior a la fecha de devolución
+     * y el préstamo sigue en estado PRESTADO
+     */
+    @Transactional
+    public void actualizarEstadosVencidos() {
+        LocalDate fechaActual = LocalDate.now();
         
-        // Filtrar los libros según su disponibilidad
-        return todosLosLibros.stream().filter(libro -> {
-            // Contar cuántos préstamos activos hay de este libro
-            long prestamosActivos = prestamoRepository.countByLibroAndEstadoIn(
-                    libro, 
-                    List.of(Prestamo.EstadoPrestamo.PRESTADO, Prestamo.EstadoPrestamo.VENCIDO)
-            );
-            
-            // Un libro está disponible si hay más existencias que préstamos activos
-            return libro.getExistencias() > prestamosActivos;
-        }).collect(Collectors.toList());
+        // Buscar préstamos en estado PRESTADO que ya pasaron su fecha de devolución
+        List<Prestamo> prestamosVencidos = prestamoRepository.findAll().stream()
+                .filter(prestamo -> 
+                    prestamo.getEstado() == Prestamo.EstadoPrestamo.PRESTADO &&
+                    prestamo.getFechaDevolucion().isBefore(fechaActual))
+                .collect(Collectors.toList());
+        
+        // Actualizar estado a VENCIDO
+        for (Prestamo prestamo : prestamosVencidos) {
+            prestamo.setEstado(Prestamo.EstadoPrestamo.VENCIDO);
+            prestamoRepository.save(prestamo);
+        }
+        
+        if (!prestamosVencidos.isEmpty()) {
+            System.out.println("Se actualizaron " + prestamosVencidos.size() + " préstamos a estado VENCIDO");
+        }
     }
 
     /**

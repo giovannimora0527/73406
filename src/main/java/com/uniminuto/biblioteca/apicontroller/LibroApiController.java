@@ -5,9 +5,12 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RestController;
 import com.uniminuto.biblioteca.entity.Libro;
 import com.uniminuto.biblioteca.services.LibroService;
+import java.util.Map;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -50,5 +53,10 @@ public class LibroApiController implements LibroApi {
         return ResponseEntity.ok(this.libroService
                 .obtenerLibroXRangoPublicacion(anioIni, anioFin));
     }
-
+    
+    
+    @Override
+    public ResponseEntity<Map<String, Object>> cargarLibrosDesdeCSV(MultipartFile archivo) throws BadRequestException {
+        return ResponseEntity.ok(this.libroService.cargarLibrosDesdeCSV(archivo));
+    }
 }
